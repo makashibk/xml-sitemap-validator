@@ -1,2 +1,1 @@
-# xml-sitemap-validator
-XML Sitemap Checker and Validator
+# XML Sitemap Checker and Validator
