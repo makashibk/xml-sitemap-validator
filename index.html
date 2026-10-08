@@ -1,0 +1,4518 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XML Sitemap Checker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Google+Sans+Text:wght@400;500;600&family=Google+Sans+Mono:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --google-blue:#1a73e8;
+  --google-blue-hover:#1765cc;
+  --google-blue-pressed:#185abc;
+  --google-blue-light:#e8f0fe;
+  --google-blue-surface:rgba(26,115,232,0.08);
+  
+  --google-green:#1e8e3e;
+  --google-green-light:#e6f4ea;
+  --google-green-surface:rgba(30,142,62,0.1);
+  --google-green-border:#ceead6;
+  
+  --google-red:#d93025;
+  --google-red-light:#fce8e6;
+  --google-red-surface:rgba(217,48,37,0.08);
+  --google-red-border:#fad2cf;
+  
+  --google-yellow:#b06000;
+  --google-yellow-bg:#f9ab00;
+  --google-yellow-light:#fef7e0;
+  --google-yellow-surface:rgba(249,171,0,0.12);
+  --google-yellow-border:#feefc3;
+  
+  --google-grey-50:#f8f9fa;
+  --google-grey-100:#f1f3f4;
+  --google-grey-200:#e8eaed;
+  --google-grey-300:#dadce0;
+  --google-grey-400:#bdc1c6;
+  --google-grey-500:#9aa0a6;
+  --google-grey-600:#80868b;
+  --google-grey-700:#5f6368;
+  --google-grey-800:#3c4043;
+  --google-grey-900:#202124;
+
+  --font:'Google Sans Text','Google Sans','Roboto',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-display:'Google Sans','Roboto',sans-serif;
+  --mono:'Google Sans Mono','Roboto Mono',SFMono-Regular,Consolas,monospace;
+  
+  --ease:cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring:cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ─── Light Mode ─── */
+[data-theme="light"]{
+  --bg-app:#f8fafd;
+  --bg-card:#ffffff;
+  --bg-card-subtle:#fafbfc;
+  --bg-hover:#f1f3f4;
+  --bg-active:#e8eaed;
+  --border-color:#dadce0;
+  --border-light:#e8eaed;
+  --text-primary:#202124;
+  --text-secondary:#5f6368;
+  --text-tertiary:#80868b;
+  --text-inverse:#ffffff;
+  --shadow-card:0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+  --shadow-flat:0 1px 3px 0 rgba(60,64,67,0.12), 0 1px 2px 0 rgba(60,64,67,0.24);
+  --shadow-hover:0 2px 6px 2px rgba(60,64,67,0.15);
+  --shadow-modal:0 8px 24px -4px rgba(60,64,67,0.2), 0 2px 6px -1px rgba(60,64,67,0.15);
+  --ripple-color:rgba(26,115,232,0.16);
+  --code-bg:#f1f3f4;
+}
+
+/* ─── Dark Mode ─── */
+[data-theme="dark"]{
+  --bg-app:#1f1f1f;
+  --bg-card:#2d2f31;
+  --bg-card-subtle:#282a2c;
+  --bg-hover:#35373a;
+  --bg-active:#3f4246;
+  --border-color:#444746;
+  --border-light:#383b3e;
+  --text-primary:#e3e3e3;
+  --text-secondary:#c4c7c5;
+  --text-tertiary:#8e918f;
+  --text-inverse:#1f1f1f;
+  
+  --google-blue:#8ab4f8;
+  --google-blue-hover:#aecbfa;
+  --google-blue-pressed:#669df6;
+  --google-blue-light:rgba(138,180,248,0.16);
+  --google-blue-surface:rgba(138,180,248,0.1);
+  
+  --google-green:#81c995;
+  --google-green-light:rgba(129,201,149,0.16);
+  --google-green-surface:rgba(129,201,149,0.1);
+  --google-green-border:rgba(129,201,149,0.3);
+  
+  --google-red:#f28b82;
+  --google-red-light:rgba(242,139,130,0.16);
+  --google-red-surface:rgba(242,139,130,0.1);
+  --google-red-border:rgba(242,139,130,0.3);
+  
+  --google-yellow:#fdd663;
+  --google-yellow-bg:#fdd663;
+  --google-yellow-light:rgba(253,214,99,0.14);
+  --google-yellow-surface:rgba(253,214,99,0.1);
+  --google-yellow-border:rgba(253,214,99,0.3);
+
+  --shadow-card:0 1px 3px 0 rgba(0,0,0,0.5);
+  --shadow-flat:0 1px 2px 0 rgba(0,0,0,0.4);
+  --shadow-hover:0 4px 12px 0 rgba(0,0,0,0.6);
+  --shadow-modal:0 12px 32px 0 rgba(0,0,0,0.7);
+  --ripple-color:rgba(138,180,248,0.22);
+  --code-bg:#1a1c1e;
+}
+
+html{font-size:14px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{
+  font-family:var(--font);
+  background:var(--bg-app);
+  color:var(--text-primary);
+  line-height:1.5;
+  min-height:100vh;
+  transition:background-color 0.25s var(--ease), color 0.25s var(--ease);
+}
+
+/* ─── Scrollbars ─── */
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--google-grey-400);border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--google-grey-500)}
+
+/* ─── Material Ripple Effect ─── */
+.g-btn, .g-chip, .g-tab, .upload-btn, .theme-toggle, .sample-btn, .action-btn-sm, .gsc-action-btn{
+  position:relative;
+  overflow:hidden;
+}
+.g-ripple{
+  position:absolute;
+  border-radius:50%;
+  transform:scale(0);
+  animation:ripple-animation 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background-color:var(--ripple-color);
+  pointer-events:none;
+}
+@keyframes ripple-animation{
+  to{
+    transform:scale(4);
+    opacity:0;
+  }
+}
+
+/* ─── Header ─── */
+.gsc-header{
+  background:var(--bg-card);
+  border-bottom:1px solid var(--border-color);
+  height:64px;
+  padding:0 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  position:sticky;
+  top:0;
+  z-index:90;
+  transition:all 0.2s var(--ease);
+}
+.header-brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+  user-select:none;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.header-logo-icon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  border-radius:10px;
+  background:var(--google-blue-surface);
+  color:var(--google-blue);
+  transition:transform 0.25s var(--ease-spring);
+}
+.header-brand:hover .header-logo-icon{
+  transform:scale(1.05);
+}
+.header-title{
+  font-family:var(--font-display);
+  font-size:18px;
+  font-weight:500;
+  color:var(--text-primary);
+  letter-spacing:-0.2px;
+}
+.gsc-header-search{
+  flex:1;
+  max-width:520px;
+  height:42px;
+  background:var(--bg-hover);
+  border:1px solid transparent;
+  border-radius:8px;
+  padding:0 14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+  transition:all 0.2s var(--ease);
+  color:var(--text-secondary);
+}
+.gsc-header-search:hover{
+  background:var(--bg-card);
+  border-color:var(--border-color);
+  box-shadow:0 1px 3px rgba(60,64,67,0.12);
+  color:var(--text-primary);
+}
+.gsc-header-search .search-icon{
+  width:18px;
+  height:18px;
+  color:var(--text-tertiary);
+  flex-shrink:0;
+}
+.gsc-header-search .search-hint{
+  font-family:var(--font);
+  font-size:13px;
+  color:var(--text-secondary);
+  flex:1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.gsc-header-search .header-kbd{
+  font-family:var(--mono);
+  font-size:11px;
+  background:var(--bg-card);
+  padding:2px 6px;
+  border-radius:4px;
+  border:1px solid var(--border-color);
+  color:var(--text-tertiary);
+  flex-shrink:0;
+}
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+}
+.gsc-header-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:var(--font-display);
+  font-size:13px;
+  font-weight:500;
+  color:var(--google-blue);
+  background:var(--google-blue-surface);
+  border:1px solid rgba(26,115,232,0.25);
+  border-radius:20px;
+  padding:6px 14px;
+  cursor:pointer;
+  transition:all 0.2s var(--ease);
+}
+.gsc-header-btn:hover{
+  background:var(--google-blue);
+  color:#ffffff;
+  border-color:var(--google-blue);
+  transform:translateY(-1px);
+}
+.shortcut-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  color:var(--text-secondary);
+  background:var(--bg-hover);
+  padding:6px 12px;
+  border-radius:20px;
+  border:1px solid var(--border-light);
+  cursor:pointer;
+  transition:all 0.2s var(--ease);
+}
+.shortcut-badge:hover{
+  background:var(--bg-active);
+  color:var(--text-primary);
+  border-color:var(--border-color);
+}
+.shortcut-badge kbd{
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:600;
+  background:var(--bg-card);
+  padding:1px 5px;
+  border-radius:4px;
+  border:1px solid var(--border-color);
+  box-shadow:0 1px 0 var(--border-color);
+}
+
+.theme-toggle{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--text-secondary);
+  transition:background-color 0.2s var(--ease), transform 0.15s;
+}
+.theme-toggle:hover{
+  background:var(--bg-hover);
+  color:var(--text-primary);
+}
+.theme-toggle:active{
+  transform:scale(0.92);
+}
+.theme-toggle svg{
+  width:20px;
+  height:20px;
+  transition:transform 0.4s var(--ease-spring);
+}
+.theme-toggle:hover svg{
+  transform:rotate(25deg);
+}
+[data-theme="light"] .theme-moon{display:none}
+[data-theme="dark"] .theme-sun{display:none}
+
+/* ─── Main Container ─── */
+.gsc-container{
+  max-width:1180px;
+  margin:0 auto;
+  padding:28px 24px 60px;
+}
+
+/* ─── Upload Card ─── */
+.upload-card{
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:12px;
+  padding:44px 28px 36px;
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.25s var(--ease);
+  position:relative;
+  margin-bottom:28px;
+  box-shadow:var(--shadow-flat);
+}
+.upload-card:hover{
+  border-color:var(--google-blue);
+  box-shadow:var(--shadow-card);
+}
+.upload-card.dragover{
+  border:2px dashed var(--google-blue);
+  background:var(--google-blue-surface);
+  transform:scale(1.005);
+}
+.upload-icon-circle{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:var(--google-blue-light);
+  color:var(--google-blue);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:16px;
+  transition:transform 0.3s var(--ease-spring), box-shadow 0.3s;
+}
+.upload-card:hover .upload-icon-circle{
+  transform:translateY(-2px) scale(1.05);
+  box-shadow:0 6px 16px var(--google-blue-surface);
+}
+.upload-icon-circle svg{
+  width:28px;
+  height:28px;
+}
+.upload-headline{
+  font-family:var(--font-display);
+  font-size:24px;
+  font-weight:500;
+  color:var(--text-primary);
+  margin-bottom:8px;
+  letter-spacing:-0.3px;
+}
+.upload-subheadline{
+  font-family:var(--font);
+  font-size:14px;
+  color:var(--text-secondary);
+  max-width:580px;
+  margin:0 auto 24px;
+  line-height:1.55;
+}
+.upload-buttons-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:22px;
+}
+.upload-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:var(--google-blue);
+  color:#ffffff;
+  font-family:var(--font-display);
+  font-size:14px;
+  font-weight:500;
+  padding:0 24px;
+  height:40px;
+  border-radius:20px;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 1px 2px 0 rgba(60,64,67,0.30), 0 1px 3px 1px rgba(60,64,67,0.15);
+  transition:all 0.2s var(--ease);
+  letter-spacing:0.25px;
+  white-space:nowrap;
+}
+.upload-btn:hover{
+  background:var(--google-blue-hover);
+  box-shadow:0 1px 3px 0 rgba(60,64,67,0.30), 0 4px 8px 3px rgba(60,64,67,0.15);
+  transform:translateY(-1px);
+}
+.upload-btn:active{
+  background:var(--google-blue-pressed);
+  transform:scale(0.98);
+}
+.upload-btn svg{
+  width:18px;
+  height:18px;
+  flex-shrink:0;
+}
+.paste-btn-outline{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:transparent;
+  color:var(--google-blue);
+  font-family:var(--font-display);
+  font-size:14px;
+  font-weight:500;
+  padding:0 22px;
+  height:40px;
+  border-radius:20px;
+  border:1px solid var(--border-color);
+  cursor:pointer;
+  transition:all 0.2s var(--ease);
+  letter-spacing:0.25px;
+  white-space:nowrap;
+}
+.paste-btn-outline:hover{
+  background:var(--google-blue-surface);
+  border-color:var(--google-blue);
+  transform:translateY(-1px);
+}
+.paste-btn-outline:active{
+  transform:scale(0.98);
+}
+.paste-btn-outline svg{
+  width:16px;
+  height:16px;
+  flex-shrink:0;
+}
+.upload-specs{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  margin-top:20px;
+  flex-wrap:wrap;
+}
+.spec-item{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:var(--font);
+  font-size:12px;
+  color:var(--text-secondary);
+  background:var(--bg-hover);
+  padding:5px 12px;
+  border-radius:16px;
+  border:1px solid var(--border-light);
+}
+.spec-item svg{
+  width:14px;
+  height:14px;
+  color:var(--google-blue);
+  flex-shrink:0;
+}
+
+/* Sample sitemaps bar */
+.sample-bar{
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px dashed var(--border-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.sample-bar-label{
+  font-size:12px;
+  font-weight:600;
+  color:var(--text-tertiary);
+  text-transform:uppercase;
+  letter-spacing:0.4px;
+}
+.sample-btn{
+  font-family:var(--font);
+  font-size:12.5px;
+  font-weight:500;
+  color:var(--google-blue);
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  padding:6px 14px;
+  border-radius:18px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  transition:all 0.15s var(--ease);
+  box-shadow:0 1px 2px rgba(60,64,67,0.06);
+}
+.sample-btn:hover{
+  background:var(--google-blue-surface);
+  border-color:var(--google-blue);
+  transform:translateY(-1px);
+}
+#fileInput{display:none}
+
+/* Raw XML Paste Box */
+.paste-box-card{
+  display:none;
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:24px;
+  box-shadow:var(--shadow-flat);
+}
+.paste-box-card.visible{display:block}
+.paste-textarea{
+  width:100%;
+  height:180px;
+  background:var(--code-bg);
+  border:1px solid var(--border-color);
+  border-radius:10px;
+  padding:14px;
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--text-primary);
+  outline:none;
+  resize:vertical;
+}
+.paste-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:16px;
+  flex-wrap:wrap;
+}
+
+/* ─── Sitemap Type Selection & Staged Pre-Analysis Review ─── */
+.sitemap-type-picker{
+  margin-top:16px;
+  padding-top:16px;
+  border-top:1px solid var(--border-light);
+}
+.sitemap-type-title{
+  font-family:var(--font-display);
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-primary);
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.sitemap-type-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));
+  gap:10px;
+  margin-bottom:16px;
+}
+.sitemap-type-card{
+  border:1px solid var(--border-color);
+  border-radius:10px;
+  padding:12px 14px;
+  background:var(--bg-card);
+  cursor:pointer;
+  transition:all 0.2s var(--ease);
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  user-select:none;
+}
+.sitemap-type-card:hover{
+  border-color:var(--google-blue);
+  background:var(--google-blue-surface);
+}
+.sitemap-type-card.selected{
+  border-color:var(--google-blue);
+  background:var(--google-blue-surface);
+  box-shadow:0 0 0 1px var(--google-blue);
+}
+.sitemap-type-radio{
+  margin-top:3px;
+  accent-color:var(--google-blue);
+  cursor:pointer;
+}
+.sitemap-type-info h5{
+  font-family:var(--font-display);
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-primary);
+  margin-bottom:2px;
+}
+.sitemap-type-info p{
+  font-family:var(--font);
+  font-size:11.5px;
+  color:var(--text-secondary);
+  line-height:1.35;
+}
+
+/* Staged Review Card for uploaded / dropped files */
+.staged-review-card{
+  display:none;
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:14px;
+  padding:24px;
+  margin-bottom:24px;
+  box-shadow:var(--shadow-card);
+  animation:slideDown 0.3s var(--ease);
+}
+.staged-review-card.visible{
+  display:block;
+}
+.staged-review-header{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--border-light);
+}
+.staged-file-icon{
+  width:44px;
+  height:44px;
+  border-radius:10px;
+  background:var(--google-blue-surface);
+  color:var(--google-blue);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.staged-file-name{
+  font-family:var(--font-display);
+  font-size:16px;
+  font-weight:600;
+  color:var(--text-primary);
+  word-break:break-all;
+}
+.staged-file-meta{
+  font-size:12px;
+  color:var(--text-secondary);
+  margin-top:2px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.staged-actions-row{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:12px;
+  margin-top:18px;
+  flex-wrap:wrap;
+}
+
+/* ─── Active File Banner ─── */
+.file-badge-card{
+  display:none;
+  align-items:center;
+  gap:16px;
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:14px;
+  padding:14px 20px;
+  margin-bottom:24px;
+  box-shadow:var(--shadow-flat);
+  animation:slideDown 0.3s var(--ease);
+}
+.file-badge-card.visible{display:flex}
+@keyframes slideDown{
+  from{opacity:0;transform:translateY(-10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.file-icon-box{
+  width:40px;
+  height:40px;
+  border-radius:10px;
+  background:var(--google-blue-surface);
+  color:var(--google-blue);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.file-icon-box svg{width:20px;height:20px}
+.file-meta-col{
+  flex:1;
+  min-width:0;
+}
+.file-name-text{
+  font-family:var(--font-display);
+  font-size:15px;
+  font-weight:600;
+  color:var(--text-primary);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.file-details-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:12px;
+  color:var(--text-secondary);
+  margin-top:2px;
+}
+.file-pill{
+  background:var(--bg-hover);
+  padding:2px 8px;
+  border-radius:4px;
+  font-family:var(--mono);
+  font-size:11px;
+}
+.file-action-btn{
+  background:transparent;
+  border:1px solid var(--border-color);
+  color:var(--text-secondary);
+  border-radius:20px;
+  padding:7px 15px;
+  font-size:13px;
+  font-weight:500;
+  font-family:var(--font);
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  transition:all 0.2s var(--ease);
+}
+.file-action-btn:hover{
+  background:var(--google-red-light);
+  color:var(--google-red);
+  border-color:var(--google-red-border);
+}
+
+/* ─── Progress Bar ─── */
+.progress-card{
+  display:none;
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:14px;
+  padding:24px;
+  margin-bottom:24px;
+  box-shadow:var(--shadow-flat);
+}
+.progress-track{
+  background:var(--bg-hover);
+  height:8px;
+  border-radius:8px;
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  border-radius:8px;
+  background:linear-gradient(90deg, var(--google-blue), #6ba5f2);
+  transition:width 0.25s var(--ease);
+}
+.progress-msg{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:13px;
+  color:var(--text-secondary);
+  margin-top:12px;
+  font-weight:500;
+}
+
+/* ─── Dashboard Results ─── */
+#resultsView{display:none}
+
+/* Health Score Card */
+.overview-card{
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:16px;
+  padding:26px 30px;
+  margin-bottom:24px;
+  display:flex;
+  align-items:center;
+  gap:32px;
+  box-shadow:var(--shadow-flat);
+  transition:all 0.2s var(--ease);
+}
+.overview-card:hover{
+  box-shadow:var(--shadow-card);
+}
+.score-radial-wrap{
+  position:relative;
+  width:116px;
+  height:116px;
+  flex-shrink:0;
+}
+.score-radial-wrap svg{
+  transform:rotate(-90deg);
+}
+.score-circle-bg{
+  fill:none;
+  stroke:var(--bg-hover);
+  stroke-width:8;
+}
+.score-circle-bar{
+  fill:none;
+  stroke-width:8;
+  stroke-linecap:round;
+  transition:stroke-dashoffset 1s cubic-bezier(0.34, 1.56, 0.64, 1), stroke 0.3s;
+}
+.score-center-text{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.score-val{
+  font-family:var(--font-display);
+  font-size:32px;
+  font-weight:700;
+  line-height:1;
+}
+.score-max{
+  font-size:11px;
+  color:var(--text-tertiary);
+  font-weight:600;
+  margin-top:3px;
+}
+.overview-content{
+  flex:1;
+}
+.overview-title{
+  font-family:var(--font-display);
+  font-size:20px;
+  font-weight:600;
+  color:var(--text-primary);
+  margin-bottom:6px;
+  letter-spacing:-0.2px;
+}
+.overview-desc{
+  font-size:14px;
+  color:var(--text-secondary);
+  line-height:1.65;
+  max-width:720px;
+}
+
+/* ─── Metric Cards Grid ─── */
+.metrics-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));
+  gap:14px;
+  margin-bottom:24px;
+}
+.metric-card{
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:14px;
+  padding:16px 18px;
+  box-shadow:var(--shadow-flat);
+  transition:all 0.2s var(--ease);
+  position:relative;
+}
+.metric-card:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-card);
+}
+.metric-label{
+  font-size:11px;
+  font-weight:600;
+  color:var(--text-tertiary);
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  margin-bottom:4px;
+}
+.metric-value{
+  font-family:var(--font-display);
+  font-size:26px;
+  font-weight:700;
+  color:var(--text-primary);
+  line-height:1.15;
+  letter-spacing:-0.5px;
+}
+.metric-sub{
+  font-size:11px;
+  font-weight:500;
+  color:var(--text-secondary);
+  margin-top:4px;
+}
+.metric-card.err .metric-value{color:var(--google-red)}
+.metric-card.warn .metric-value{color:var(--google-yellow)}
+.metric-card.ok .metric-value{color:var(--google-green)}
+
+/* ─── Tabs Card ─── */
+.gsc-tabs-card{
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:var(--shadow-flat);
+  margin-bottom:24px;
+}
+.gsc-tabs-header{
+  display:flex;
+  align-items:center;
+  background:var(--bg-card);
+  border-bottom:1px solid var(--border-color);
+  padding:0 8px;
+  overflow-x:auto;
+}
+.gsc-tabs-header::-webkit-scrollbar{height:0}
+.gsc-tab{
+  padding:16px 18px;
+  font-family:var(--font-display);
+  font-size:13.5px;
+  font-weight:500;
+  color:var(--text-secondary);
+  cursor:pointer;
+  border:none;
+  background:transparent;
+  border-bottom:3px solid transparent;
+  white-space:nowrap;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:all 0.2s var(--ease);
+}
+.gsc-tab:hover{
+  color:var(--text-primary);
+  background:var(--bg-hover);
+}
+.gsc-tab.active{
+  color:var(--google-blue);
+  border-bottom-color:var(--google-blue);
+  font-weight:600;
+}
+.tab-badge{
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:600;
+  padding:2px 7px;
+  border-radius:10px;
+  line-height:1.2;
+}
+.tab-badge.err{background:var(--google-red-light);color:var(--google-red)}
+.tab-badge.warn{background:var(--google-yellow-light);color:var(--google-yellow)}
+.tab-badge.ok{background:var(--google-green-light);color:var(--google-green)}
+.tab-badge.info{background:var(--google-blue-light);color:var(--google-blue)}
+
+/* ─── Tab Panels ─── */
+.gsc-tab-panel{
+  display:none;
+  padding:0;
+  animation:panelFade 0.2s var(--ease);
+}
+.gsc-tab-panel.active{display:block}
+@keyframes panelFade{
+  from{opacity:0;transform:translateY(4px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ─── Official Google Doc Link Chip ─── */
+.g-doc-link{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-size:12px;
+  font-weight:500;
+  color:var(--google-blue);
+  background:var(--google-blue-surface);
+  border:1px solid var(--border-light);
+  padding:4px 10px;
+  border-radius:6px;
+  text-decoration:none;
+  transition:all 0.15s;
+}
+.g-doc-link:hover{
+  background:var(--google-blue-light);
+  border-color:var(--google-blue);
+  text-decoration:underline;
+}
+.g-doc-link svg{
+  width:12px;
+  height:12px;
+  flex-shrink:0;
+}
+
+/* ─── Accordion Issue Row ─── */
+.issue-row{
+  border-bottom:1px solid var(--border-light);
+  transition:background-color 0.15s var(--ease);
+}
+.issue-row:last-child{border-bottom:none}
+.issue-row-header{
+  padding:16px 22px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  cursor:pointer;
+  user-select:none;
+}
+.issue-row-header:hover{
+  background:var(--bg-hover);
+}
+.issue-badge-icon{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.issue-badge-icon.err{background:var(--google-red-light);color:var(--google-red)}
+.issue-badge-icon.warn{background:var(--google-yellow-light);color:var(--google-yellow)}
+.issue-badge-icon.info{background:var(--google-blue-light);color:var(--google-blue)}
+.issue-badge-icon svg{width:16px;height:16px}
+
+.issue-headline-wrap{
+  flex:1;
+  min-width:0;
+}
+.issue-title-text{
+  font-family:var(--font-display);
+  font-size:14.5px;
+  font-weight:600;
+  color:var(--text-primary);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.issue-desc-sub{
+  font-size:13px;
+  color:var(--text-secondary);
+  margin-top:2px;
+}
+.issue-count-pill{
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:600;
+  color:var(--text-secondary);
+  background:var(--bg-hover);
+  padding:3px 10px;
+  border-radius:10px;
+}
+.issue-arrow-icon{
+  color:var(--text-tertiary);
+  transition:transform 0.25s var(--ease);
+}
+.issue-row.expanded .issue-arrow-icon{
+  transform:rotate(180deg);
+}
+
+.issue-row-body{
+  display:none;
+  padding:0 24px 20px 68px;
+  background:var(--bg-card-subtle);
+  border-top:1px solid var(--border-light);
+}
+.issue-row.expanded .issue-row-body{display:block}
+
+.issue-explanation-box{
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:10px;
+  padding:14px 18px;
+  margin:16px 0 12px;
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.6;
+}
+.issue-doc-action{
+  margin:10px 0 16px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.issue-item-entry{
+  font-size:13px;
+  padding:7px 0;
+  border-bottom:1px solid var(--border-light);
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  line-height:1.5;
+  color:var(--text-primary);
+}
+.issue-item-entry:last-child{border-bottom:none}
+.issue-item-entry code{
+  font-family:var(--mono);
+  font-size:12px;
+  background:var(--code-bg);
+  padding:2px 8px;
+  border-radius:4px;
+  border:1px solid var(--border-light);
+  word-break:break-all;
+}
+
+/* ─── Best Practices Check Items ─── */
+.bp-row{
+  padding:16px 22px;
+  border-bottom:1px solid var(--border-light);
+  display:flex;
+  align-items:flex-start;
+  gap:16px;
+  transition:background-color 0.15s;
+}
+.bp-row:last-child{border-bottom:none}
+.bp-row:hover{background:var(--bg-hover)}
+.bp-icon-bubble{
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  margin-top:2px;
+}
+.bp-icon-bubble.pass{background:var(--google-green-light);color:var(--google-green)}
+.bp-icon-bubble.fail{background:var(--google-red-light);color:var(--google-red)}
+.bp-icon-bubble.partial{background:var(--google-yellow-light);color:var(--google-yellow)}
+.bp-icon-bubble svg{width:14px;height:14px}
+.bp-info-col{flex:1}
+.bp-header-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.bp-title{
+  font-family:var(--font-display);
+  font-size:14px;
+  font-weight:600;
+  color:var(--text-primary);
+}
+.bp-status-tag{
+  font-size:11px;
+  font-weight:700;
+  padding:2px 8px;
+  border-radius:4px;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+}
+.bp-status-tag.pass{background:var(--google-green-light);color:var(--google-green)}
+.bp-status-tag.fail{background:var(--google-red-light);color:var(--google-red)}
+.bp-status-tag.partial{background:var(--google-yellow-light);color:var(--google-yellow)}
+.bp-description{
+  font-size:13px;
+  color:var(--text-secondary);
+  margin-top:4px;
+  line-height:1.55;
+}
+.bp-doc-link-wrap{
+  margin-top:8px;
+}
+
+/* ─── SEO Insights Tab ─── */
+.seo-insights-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:16px;
+  padding:20px;
+  background:var(--bg-card);
+}
+.seo-insight-box{
+  background:var(--bg-card-subtle);
+  border:1px solid var(--border-color);
+  border-radius:12px;
+  padding:16px 18px;
+}
+.seo-insight-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-family:var(--font-display);
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-primary);
+  margin-bottom:12px;
+}
+.seo-stat-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:12.5px;
+  padding:6px 0;
+  border-bottom:1px solid var(--border-light);
+  color:var(--text-secondary);
+}
+.seo-stat-row:last-child{border-bottom:none}
+.seo-stat-val{
+  font-family:var(--mono);
+  font-size:12px;
+  font-weight:600;
+  color:var(--text-primary);
+}
+
+/* ─── URL Explorer ─── */
+.url-toolbar{
+  padding:16px 20px;
+  border-bottom:1px solid var(--border-light);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  background:var(--bg-card);
+}
+.search-input-box{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:var(--bg-hover);
+  border:1px solid transparent;
+  border-radius:24px;
+  padding:8px 16px;
+  flex:1;
+  min-width:240px;
+  max-width:380px;
+  transition:all 0.2s var(--ease);
+}
+.search-input-box:focus-within{
+  background:var(--bg-card);
+  border-color:var(--google-blue);
+  box-shadow:0 0 0 3px var(--google-blue-surface);
+}
+.search-input-box input{
+  border:none;
+  background:transparent;
+  outline:none;
+  font-family:var(--font);
+  font-size:13px;
+  color:var(--text-primary);
+  width:100%;
+}
+.search-input-box svg{color:var(--text-tertiary);flex-shrink:0}
+
+.filter-chips-wrap{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.g-chip{
+  font-size:12px;
+  font-weight:500;
+  padding:5px 12px;
+  border-radius:18px;
+  border:1px solid var(--border-color);
+  background:var(--bg-card);
+  color:var(--text-secondary);
+  cursor:pointer;
+  transition:all 0.15s var(--ease);
+  user-select:none;
+}
+.g-chip:hover{
+  background:var(--bg-hover);
+  border-color:var(--text-tertiary);
+}
+.g-chip.active{
+  background:var(--google-blue-light);
+  color:var(--google-blue);
+  border-color:var(--google-blue);
+  font-weight:600;
+}
+.url-toolbar-right{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.action-btn-sm{
+  background:var(--bg-hover);
+  border:1px solid var(--border-color);
+  color:var(--text-secondary);
+  padding:5px 12px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  transition:all 0.15s;
+}
+.action-btn-sm:hover{
+  background:var(--bg-active);
+  color:var(--text-primary);
+}
+
+.table-scroll-container{
+  max-height:540px;
+  overflow-y:auto;
+}
+.gsc-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+.gsc-table th{
+  background:var(--bg-card-subtle);
+  color:var(--text-tertiary);
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.6px;
+  padding:12px 18px;
+  border-bottom:1px solid var(--border-color);
+  text-align:left;
+  position:sticky;
+  top:0;
+  z-index:2;
+}
+.gsc-table td{
+  padding:11px 18px;
+  border-bottom:1px solid var(--border-light);
+  color:var(--text-primary);
+  vertical-align:middle;
+}
+.gsc-table tbody tr{
+  cursor:pointer;
+  transition:background-color 0.15s;
+}
+.gsc-table tbody tr:hover td{
+  background-color:var(--bg-hover);
+}
+.table-url-cell{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--google-blue);
+  word-break:break-all;
+  line-height:1.45;
+}
+.badge-tag{
+  display:inline-flex;
+  align-items:center;
+  font-size:11px;
+  font-weight:600;
+  padding:2px 8px;
+  border-radius:6px;
+  letter-spacing:0.2px;
+}
+.badge-tag.ok{background:var(--google-green-light);color:var(--google-green)}
+.badge-tag.err{background:var(--google-red-light);color:var(--google-red)}
+
+/* Table Pagination */
+.gsc-pagination{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px 20px;
+  border-top:1px solid var(--border-light);
+  gap:5px;
+  background:var(--bg-card);
+}
+.gsc-page-btn{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:none;
+  background:transparent;
+  color:var(--text-secondary);
+  font-family:var(--font);
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 0.15s;
+}
+.gsc-page-btn:hover:not(:disabled){
+  background:var(--bg-hover);
+  color:var(--text-primary);
+}
+.gsc-page-btn.active{
+  background:var(--google-blue);
+  color:#ffffff;
+  font-weight:600;
+}
+.gsc-page-btn:disabled{
+  opacity:0.3;
+  cursor:not-allowed;
+}
+.pagination-summary{
+  font-size:12px;
+  color:var(--text-tertiary);
+  margin:0 12px;
+  font-weight:500;
+}
+
+/* ─── Robots.txt Helper Card ─── */
+.robots-card{
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:14px;
+  padding:20px 24px;
+  margin-top:24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  box-shadow:var(--shadow-flat);
+}
+.robots-info{
+  flex:1;
+}
+.robots-title{
+  font-family:var(--font-display);
+  font-size:14px;
+  font-weight:600;
+  color:var(--text-primary);
+  margin-bottom:4px;
+}
+.robots-text{
+  font-size:12.5px;
+  color:var(--text-secondary);
+}
+.robots-code{
+  font-family:var(--mono);
+  font-size:12px;
+  background:var(--code-bg);
+  padding:8px 14px;
+  border-radius:6px;
+  border:1px solid var(--border-color);
+  color:var(--text-primary);
+  user-select:all;
+  white-space:nowrap;
+}
+.robots-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.robots-copy-btn{
+  background:var(--bg-hover);
+  border:1px solid var(--border-color);
+  color:var(--text-secondary);
+  padding:7px 13px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transition:all 0.15s;
+}
+.robots-copy-btn:hover{
+  background:var(--google-blue-light);
+  color:var(--google-blue);
+  border-color:var(--google-blue);
+}
+
+/* ─── Official Google Documentation Hub ─── */
+.doc-hub-card{
+  background:var(--bg-card);
+  border:1px solid var(--border-color);
+  border-radius:14px;
+  padding:20px 24px;
+  margin-top:16px;
+  box-shadow:var(--shadow-flat);
+}
+.doc-hub-header{
+  font-family:var(--font-display);
+  font-size:14px;
+  font-weight:600;
+  color:var(--text-primary);
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.doc-links-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:10px;
+}
+
+/* ─── URL Inspection Drawer (Modal) ─── */
+.gsc-drawer-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(2px);
+  z-index:999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.gsc-drawer-backdrop.active{
+  display:flex;
+  animation:modalFade 0.2s var(--ease);
+}
+@keyframes modalFade{
+  from{opacity:0}
+  to{opacity:1}
+}
+.gsc-drawer{
+  background:var(--bg-card);
+  border-radius:18px;
+  width:100%;
+  max-width:700px;
+  max-height:88vh;
+  box-shadow:var(--shadow-modal);
+  border:1px solid var(--border-color);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  animation:modalPop 0.25s var(--ease-spring);
+}
+@keyframes modalPop{
+  from{transform:scale(0.95);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+.drawer-header{
+  padding:18px 24px;
+  border-bottom:1px solid var(--border-light);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.drawer-header h3{
+  font-family:var(--font-display);
+  font-size:16px;
+  font-weight:600;
+  color:var(--text-primary);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.drawer-close-btn{
+  background:transparent;
+  border:none;
+  color:var(--text-secondary);
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 0.15s;
+}
+.drawer-close-btn:hover{
+  background:var(--bg-hover);
+  color:var(--text-primary);
+}
+.drawer-body{
+  padding:22px 24px;
+  overflow-y:auto;
+}
+.drawer-url-box{
+  font-family:var(--mono);
+  font-size:12.5px;
+  background:var(--code-bg);
+  padding:12px 14px;
+  border-radius:8px;
+  border:1px solid var(--border-color);
+  color:var(--google-blue);
+  word-break:break-all;
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+/* ─── Search Console Styled Action Buttons ─── */
+.drawer-actions-label{
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  color:var(--text-tertiary);
+  letter-spacing:0.6px;
+  margin-bottom:8px;
+}
+.drawer-tools-row{
+  display:flex;
+  gap:8px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+.gsc-action-btn{
+  font-family:var(--font-display);
+  font-size:12.5px;
+  font-weight:500;
+  padding:8px 16px;
+  border-radius:20px;
+  border:1px solid var(--border-color);
+  background:var(--bg-card);
+  color:var(--google-blue);
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  text-decoration:none;
+  transition:all 0.2s var(--ease);
+  box-shadow:0 1px 2px rgba(60,64,67,0.08);
+}
+.gsc-action-btn:hover{
+  background:var(--google-blue-surface);
+  border-color:var(--google-blue);
+  transform:translateY(-1px);
+  box-shadow:0 2px 6px rgba(26,115,232,0.18);
+}
+.gsc-action-btn:active{
+  transform:scale(0.97);
+}
+.gsc-action-btn svg{
+  width:15px;
+  height:15px;
+  flex-shrink:0;
+}
+.gsc-action-btn.primary{
+  background:var(--google-blue);
+  color:#ffffff;
+  border-color:var(--google-blue);
+  box-shadow:0 1px 3px rgba(26,115,232,0.3);
+}
+.gsc-action-btn.primary:hover{
+  background:var(--google-blue-hover);
+  color:#ffffff;
+  box-shadow:0 3px 8px rgba(26,115,232,0.4);
+}
+
+.drawer-section-title{
+  font-size:11.5px;
+  font-weight:700;
+  text-transform:uppercase;
+  color:var(--text-tertiary);
+  letter-spacing:0.6px;
+  margin:18px 0 8px;
+}
+.drawer-field-grid{
+  display:grid;
+  grid-template-columns:140px 1fr;
+  gap:8px 16px;
+  font-size:12.5px;
+}
+.drawer-field-label{
+  color:var(--text-secondary);
+  font-weight:500;
+}
+.drawer-field-value{
+  color:var(--text-primary);
+  font-family:var(--mono);
+  font-size:12px;
+}
+
+/* ─── Toast Notification ─── */
+.gsc-toast{
+  position:fixed;
+  bottom:32px;
+  left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--google-grey-900);
+  color:#ffffff;
+  padding:11px 22px;
+  border-radius:24px;
+  font-size:13px;
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.3);
+  z-index:9999;
+  opacity:0;
+  pointer-events:none;
+  transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.gsc-toast.active{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* ─── Responsive Media Queries ─── */
+@media(max-width:768px){
+  .gsc-container{padding:16px 12px}
+  .overview-card{flex-direction:column;text-align:center;gap:20px}
+  .metrics-grid{grid-template-columns:1fr 1fr}
+  .upload-card{padding:36px 16px}
+  .url-toolbar{flex-direction:column;align-items:stretch}
+  .search-input-box{max-width:none}
+  .robots-card{flex-direction:column;align-items:flex-start}
+  .landing-features-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .metrics-grid{grid-template-columns:1fr}
+  .header-title{font-size:16px}
+  .landing-features-grid{grid-template-columns:1fr}
+}
+
+/* ─── Drawer Extension Detail Lists ─── */
+.drawer-ext-section{
+  margin-top:12px;
+}
+.drawer-ext-toggle{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  width:100%;
+  padding:10px 14px;
+  background:var(--bg-hover);
+  border:1px solid var(--border-light);
+  border-radius:10px;
+  cursor:pointer;
+  font-family:var(--font);
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-primary);
+  transition:all 0.2s var(--ease);
+}
+.drawer-ext-toggle:hover{
+  background:var(--google-blue-surface);
+  border-color:var(--google-blue);
+  color:var(--google-blue);
+}
+.drawer-ext-toggle svg{
+  width:16px;
+  height:16px;
+  flex-shrink:0;
+  color:var(--google-blue);
+}
+.drawer-ext-toggle .ext-chevron{
+  margin-left:auto;
+  width:14px;
+  height:14px;
+  color:var(--text-tertiary);
+  transition:transform 0.25s var(--ease);
+}
+.drawer-ext-toggle.expanded .ext-chevron{
+  transform:rotate(180deg);
+}
+.drawer-ext-count{
+  font-size:11px;
+  font-weight:500;
+  background:var(--google-blue-surface);
+  color:var(--google-blue);
+  padding:2px 8px;
+  border-radius:10px;
+}
+.drawer-ext-list{
+  display:none;
+  margin-top:6px;
+  padding:8px 0 0;
+}
+.drawer-ext-list.visible{
+  display:block;
+  animation:slideDown 0.25s var(--ease);
+}
+.drawer-ext-item{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  padding:7px 12px;
+  border-radius:8px;
+  font-size:12px;
+  font-family:var(--mono);
+  word-break:break-all;
+  color:var(--text-secondary);
+  transition:background 0.15s;
+}
+.drawer-ext-item:hover{
+  background:var(--bg-hover);
+}
+.drawer-ext-item a{
+  color:var(--google-blue);
+  text-decoration:none;
+  word-break:break-all;
+}
+.drawer-ext-item a:hover{
+  text-decoration:underline;
+}
+.drawer-ext-item .ext-item-icon{
+  width:14px;
+  height:14px;
+  flex-shrink:0;
+  margin-top:1px;
+  color:var(--google-blue);
+  opacity:0.7;
+}
+.drawer-ext-item-meta{
+  font-family:var(--font);
+  font-size:11.5px;
+  color:var(--text-tertiary);
+  margin-top:2px;
+}
+.drawer-ext-toggle.disabled{
+  opacity:0.6;
+  cursor:default;
+}
+.drawer-ext-toggle.disabled:hover{
+  background:var(--bg-hover);
+  border-color:var(--border-light);
+  color:var(--text-primary);
+}
+.mini-icon-btn{
+  width:24px;
+  height:24px;
+  border-radius:4px;
+  border:1px solid var(--border-light);
+  background:var(--bg-card);
+  color:var(--text-secondary);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:all 0.15s var(--ease);
+}
+.mini-icon-btn:hover{
+  background:var(--google-blue-surface);
+  color:var(--google-blue);
+  border-color:var(--google-blue);
+}
+
+/* ─── Landing Page Feature Cards ─── */
+.landing-features{
+  display:block;
+  margin-top:32px;
+  padding-top:28px;
+  border-top:1px solid var(--border-light);
+}
+.landing-features-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:16px;
+  margin-bottom:24px;
+}
+@media(max-width:992px){
+  .landing-features-grid{
+    grid-template-columns:repeat(2, 1fr);
+  }
+}
+.landing-feature{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:16px;
+  background:var(--bg-hover);
+  border-radius:12px;
+  border:1px solid var(--border-light);
+  transition:all 0.2s var(--ease);
+}
+.landing-feature:hover{
+  background:var(--google-blue-surface);
+  border-color:var(--google-blue);
+  transform:translateY(-1px);
+  box-shadow:0 2px 8px rgba(26,115,232,0.1);
+}
+.landing-feature-icon{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  background:var(--google-blue-light);
+  color:var(--google-blue);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.landing-feature-icon svg{
+  width:18px;
+  height:18px;
+}
+.landing-feature-text h4{
+  font-family:var(--font-display);
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-primary);
+  margin-bottom:3px;
+}
+.landing-feature-text p{
+  font-size:12px;
+  color:var(--text-secondary);
+  line-height:1.4;
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="gsc-header">
+  <a class="header-brand" href="javascript:void(0)" onclick="resetApp()" title="Return to Homepage">
+    <div class="header-logo-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+      </svg>
+    </div>
+    <span class="header-title">XML Sitemap Checker</span>
+  </a>
+
+  <!-- Central GSC Inspection Search Bar -->
+  <div class="gsc-header-search" onclick="document.getElementById('fileInput').click()" title="Inspect any XML sitemap file (Ctrl + U)">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    <span class="search-hint">Inspect any XML sitemap file or feed (.xml, .xml.gz)...</span>
+    <kbd class="header-kbd">Ctrl+U</kbd>
+  </div>
+
+  <div class="header-actions">
+    <button class="gsc-header-btn" onclick="document.getElementById('fileInput').click()" title="Select sitemap file from disk">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+      <span>Upload</span>
+    </button>
+    <button class="theme-toggle" onclick="toggleColorTheme()" title="Toggle Dark / Light theme">
+      <svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- Main Container -->
+<main class="gsc-container">
+
+  <!-- Upload Area -->
+  <div class="upload-card" id="dropArea">
+    <div class="upload-icon-circle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </svg>
+    </div>
+    <h2 class="upload-headline">Inspect an XML Sitemap</h2>
+    <p class="upload-subheadline">
+      Drag &amp; drop your XML file here, click browse, or press <kbd style="font-family:var(--mono);font-size:12px;background:var(--bg-hover);border:1px solid var(--border-color);padding:2px 6px;border-radius:4px">Ctrl + U</kbd> to audit your sitemap against Google Search Central guidelines.
+    </p>
+
+    <div class="upload-buttons-row">
+      <button class="upload-btn g-btn" onclick="document.getElementById('fileInput').click()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        Select XML File
+      </button>
+      <button class="paste-btn-outline g-btn" onclick="togglePasteBox()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+          <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+        </svg>
+        Paste XML Code
+      </button>
+    </div>
+
+    <input type="file" id="fileInput" accept=".xml,.gz,text/xml,application/xml,application/gzip">
+
+    <div class="upload-specs">
+      <span class="spec-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Max 50 MB uncompressed
+      </span>
+      <span class="spec-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Max 50,000 URLs
+      </span>
+      <span class="spec-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        UTF-8 Encoded
+      </span>
+      <span class="spec-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Supports .xml &amp; .xml.gz
+      </span>
+    </div>
+
+    <!-- 1-Click Samples for instant testing -->
+    <div class="sample-bar">
+      <span class="sample-bar-label">Try Samples:</span>
+      <button class="sample-btn" onclick="loadSample('ecommerce')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span>Ecommerce (Images)</span>
+      </button>
+      <button class="sample-btn" onclick="loadSample('multilingual')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span>Multilingual (Hreflang)</span>
+      </button>
+      <button class="sample-btn" onclick="loadSample('news')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+        <span>Google News</span>
+      </button>
+      <button class="sample-btn" onclick="loadSample('issues')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>Sitemap with Errors</span>
+      </button>
+      <button class="sample-btn" onclick="loadSample('index')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        <span>Sitemap Index File</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Landing Features Showcase (Outside Drop Area) -->
+  <div class="landing-features" id="landingFeatures">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--google-blue);background:var(--google-blue-surface);padding:4px 12px;border-radius:12px;margin-bottom:8px">Google Search Central Standards</div>
+      <h3 style="font-family:var(--font-display);font-size:22px;font-weight:500;color:var(--text-primary);letter-spacing:-0.2px">Comprehensive XML Sitemap Validation Suite</h3>
+      <p style="font-size:13.5px;color:var(--text-secondary);max-width:620px;margin:4px auto 0">Instant technical verification of XML syntax, Google Search Central limits, canonical URL hygiene, media extensions, and robots.txt declarations.</p>
+    </div>
+
+    <div class="landing-features-grid">
+      <div class="landing-feature">
+        <div class="landing-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="landing-feature-text">
+          <h4>XML Validation &amp; Encoding</h4>
+          <p>Validates XML syntax, UTF-8 character encoding, root element, and official sitemaps.org/0.9 namespace compliance.</p>
+        </div>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <div class="landing-feature-text">
+          <h4>URL Hygiene &amp; Canonicals</h4>
+          <p>Detects relative URLs, duplicate canonicals, mixed HTTP/HTTPS protocols, anchor hashes, and parameter bloat.</p>
+        </div>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="landing-feature-text">
+          <h4>Google Limits</h4>
+          <p>Enforces 50 MB uncompressed size and 50,000 URL caps with proximity warnings and native .xml.gz GZIP extraction.</p>
+        </div>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <div class="landing-feature-text">
+          <h4>Rich Media &amp; Extensions</h4>
+          <p>Full support for Image sitemaps (1,000/URL), Video metadata (player/content locs), Google News, and Hreflang alternates.</p>
+        </div>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="landing-feature-text">
+          <h4>Modern Best Practices</h4>
+          <p>Flags deprecated &lt;priority&gt; and &lt;changefreq&gt; tags, checks strict W3C Datetime on &lt;lastmod&gt;, and catches future dates.</p>
+        </div>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <div class="landing-feature-text">
+          <h4>SEO Diagnostics &amp; Tools</h4>
+          <p>1-click links for Google Rich Results Test, PageSpeed Insights, Google site: index query, and Googlebot cURL command.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Raw Paste Textarea Box -->
+  <div class="paste-box-card" id="pasteBoxCard">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-family:var(--font-display);font-size:15px;font-weight:600">Paste Raw XML Sitemap Code</div>
+      <span style="font-size:12px;color:var(--text-tertiary)">Enter uncompressed XML markup</span>
+    </div>
+    <textarea class="paste-textarea" id="pasteInput" placeholder="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;urlset xmlns=&quot;http://www.sitemaps.org/schemas/sitemap/0.9&quot;&gt;&#10;  &lt;url&gt;&#10;    &lt;loc&gt;https://example.com/&lt;/loc&gt;&#10;    &lt;lastmod&gt;2026-09-17&lt;/lastmod&gt;&#10;  &lt;/url&gt;&#10;&lt;/urlset&gt;"></textarea>
+    
+    <!-- Sitemap Type Selection -->
+    <div class="sitemap-type-picker">
+      <div class="sitemap-type-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+        <span>Validate by XML Sitemap Type:</span>
+      </div>
+      <div class="sitemap-type-grid" id="pasteTypeGrid">
+        <label class="sitemap-type-card selected" onclick="selectSitemapType('auto', 'paste')">
+          <input type="radio" name="pasteSitemapType" class="sitemap-type-radio" value="auto" checked>
+          <div class="sitemap-type-info">
+            <h5>Auto-Detect (Recommended)</h5>
+            <p>Automatically identifies root tag, sitemap index, or rich media extensions</p>
+          </div>
+        </label>
+        <label class="sitemap-type-card" onclick="selectSitemapType('standard', 'paste')">
+          <input type="radio" name="pasteSitemapType" class="sitemap-type-radio" value="standard">
+          <div class="sitemap-type-info">
+            <h5>Standard XML Sitemap</h5>
+            <p>Validates standard &lt;urlset&gt; canonical web pages and HTTP/HTTPS hygiene</p>
+          </div>
+        </label>
+        <label class="sitemap-type-card" onclick="selectSitemapType('image', 'paste')">
+          <input type="radio" name="pasteSitemapType" class="sitemap-type-radio" value="image">
+          <div class="sitemap-type-info">
+            <h5>Image Sitemap</h5>
+            <p>Validates &lt;image:image&gt;, &lt;image:loc&gt;, 1,000 cap, and checks deprecated tags</p>
+          </div>
+        </label>
+        <label class="sitemap-type-card" onclick="selectSitemapType('video', 'paste')">
+          <input type="radio" name="pasteSitemapType" class="sitemap-type-radio" value="video">
+          <div class="sitemap-type-info">
+            <h5>Video Sitemap</h5>
+            <p>Validates &lt;video:video&gt;, player/content locs, thumbnails, title, duration</p>
+          </div>
+        </label>
+        <label class="sitemap-type-card" onclick="selectSitemapType('news', 'paste')">
+          <input type="radio" name="pasteSitemapType" class="sitemap-type-radio" value="news">
+          <div class="sitemap-type-info">
+            <h5>News Sitemap</h5>
+            <p>Validates &lt;news:news&gt;, publication name, language, title, and 48-hr rule</p>
+          </div>
+        </label>
+        <label class="sitemap-type-card" onclick="selectSitemapType('index', 'paste')">
+          <input type="radio" name="pasteSitemapType" class="sitemap-type-radio" value="index">
+          <div class="sitemap-type-info">
+            <h5>Sitemap Index File</h5>
+            <p>Validates &lt;sitemapindex&gt; root and child &lt;sitemap&gt; entry references</p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Actions Row: Analyze / Replace / Cancel -->
+    <div class="paste-actions">
+      <button class="action-btn-sm g-btn" onclick="cancelPastedXml()">Cancel</button>
+      <button class="paste-btn-outline g-btn" style="height:36px;padding:0 18px;font-size:13px" onclick="replacePastedXml()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+        Replace File / Clear
+      </button>
+      <button class="upload-btn g-btn" style="height:36px;padding:0 22px;font-size:13px" onclick="submitPastedXml()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        Analyze Sitemap
+      </button>
+    </div>
+  </div>
+
+  <!-- Staged File Pre-Analysis Card (For Uploaded / Dropped Files) -->
+  <div class="staged-review-card" id="stagedFileCard">
+    <div class="staged-review-header">
+      <div class="staged-file-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="staged-file-name" id="stagedFileName">sitemap.xml</div>
+        <div class="staged-file-meta">
+          <span id="stagedFileSize">0 KB</span>
+          <span>•</span>
+          <span id="stagedFileEncoding">UTF-8 Encoded</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sitemap Type Selection for Uploaded File -->
+    <div class="sitemap-type-picker">
+      <div class="sitemap-type-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+        <span>Validate by XML Sitemap Type:</span>
+      </div>
+      <div class="sitemap-type-grid" id="stagedTypeGrid">
+        <label class="sitemap-type-card selected" onclick="selectSitemapType('auto', 'staged')">
+          <input type="radio" name="stagedSitemapType" class="sitemap-type-radio" value="auto" checked>
+          <div class="sitemap-type-info">
+            <h5>Auto-Detect (Recommended)</h5>
+            <p>Automatically identifies root tag, sitemap index, or rich media extensions</p>
+          </div>
+        </label>
+        <label class="sitemap-type-card" onclick="selectSitemapType('standard', 'staged')">
+          <input type="radio" name="stagedSitemapType" class="sitemap-type-radio" value="standard">
+          <div class="sitemap-type-info">
+            <h5>Standard XML Sitemap</h5>
+            <p>Validates standard &lt;urlset&gt; canonical web pages and HTTP/HTTPS hygiene</p>
+          </div>
+        </label>
+        <label class="sitemap-type-card" onclick="selectSitemapType('image', 'staged')">
+          <input type="radio" name="stagedSitemapType" class="sitemap-type-radio" value="image">
+          <div class="sitemap-type-info">
+            <h5>Image Sitemap</h5>
+            <p>Validates &lt;image:image&gt;, &lt;image:loc&gt;, 1,000 cap, and checks deprecated tags</p>
+          </div>
+        </label>
+        <label class="sitemap-type-card" onclick="selectSitemapType('video', 'staged')">
+          <input type="radio" name="stagedSitemapType" class="sitemap-type-radio" value="video">
+          <div class="sitemap-type-info">
+            <h5>Video Sitemap</h5>
+            <p>Validates &lt;video:video&gt;, player/content locs, thumbnails, title, duration</p>
+          </div>
+        </label>
+        <label class="sitemap-type-card" onclick="selectSitemapType('news', 'staged')">
+          <input type="radio" name="stagedSitemapType" class="sitemap-type-radio" value="news">
+          <div class="sitemap-type-info">
+            <h5>News Sitemap</h5>
+            <p>Validates &lt;news:news&gt;, publication name, language, title, and 48-hr rule</p>
+          </div>
+        </label>
+        <label class="sitemap-type-card" onclick="selectSitemapType('index', 'staged')">
+          <input type="radio" name="stagedSitemapType" class="sitemap-type-radio" value="index">
+          <div class="sitemap-type-info">
+            <h5>Sitemap Index File</h5>
+            <p>Validates &lt;sitemapindex&gt; root and child &lt;sitemap&gt; entry references</p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Actions Row: Analyze / Replace / Cancel -->
+    <div class="staged-actions-row">
+      <button class="action-btn-sm g-btn" onclick="cancelStagedFile()">Cancel</button>
+      <button class="paste-btn-outline g-btn" style="height:36px;padding:0 18px;font-size:13px" onclick="document.getElementById('fileInput').click()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+        Replace File
+      </button>
+      <button class="upload-btn g-btn" style="height:36px;padding:0 22px;font-size:13px" onclick="analyzeStagedFile()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        Analyze Sitemap
+      </button>
+    </div>
+  </div>
+
+  <!-- Active File Information Banner -->
+  <div class="file-badge-card" id="fileBadgeCard">
+    <div class="file-icon-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+      </svg>
+    </div>
+    <div class="file-meta-col">
+      <div class="file-name-text" id="activeFileName">sitemap.xml</div>
+      <div class="file-details-row">
+        <span id="activeFileSize">0 KB</span>
+        <span>•</span>
+        <span class="file-pill" id="activeFileType">XML Sitemap</span>
+        <span>•</span>
+        <span id="activeParseDuration">Parsed in 0ms</span>
+      </div>
+    </div>
+    <button class="file-action-btn g-btn" onclick="resetApp()" title="Choose another sitemap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="1 4 1 10 7 10"></polyline>
+        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+      </svg>
+      Test Another File
+    </button>
+  </div>
+
+  <!-- Progress Bar Card -->
+  <div class="progress-card" id="progressBarCard">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-msg">
+      <span id="progressStatus">Reading file...</span>
+      <span id="progressPercent">0%</span>
+    </div>
+  </div>
+
+  <!-- Inspection Dashboard -->
+  <div id="resultsView">
+
+    <!-- Overall Health Overview -->
+    <div class="overview-card">
+      <div class="score-radial-wrap">
+        <svg width="116" height="116" viewBox="0 0 116 116">
+          <circle class="score-circle-bg" cx="58" cy="58" r="48"></circle>
+          <circle class="score-circle-bar" id="scoreBar" cx="58" cy="58" r="48" stroke-dasharray="301.6" stroke-dashoffset="301.6"></circle>
+        </svg>
+        <div class="score-center-text">
+          <span class="score-val" id="scoreVal">0</span>
+          <span class="score-max">/ 100</span>
+        </div>
+      </div>
+      <div class="overview-content">
+        <h3 class="overview-title" id="overviewHeadline">Inspection Summary</h3>
+        <p class="overview-desc" id="overviewParagraph">
+          Detailed crawlability report based on Google Search Central guidelines and the official Sitemaps XML protocol.
+        </p>
+      </div>
+    </div>
+
+    <!-- Quick Metrics Cards Grid -->
+    <div class="metrics-grid" id="metricsGrid"></div>
+
+    <!-- Main Tabbed Detail Cards -->
+    <div class="gsc-tabs-card">
+      <div class="gsc-tabs-header" id="gscTabsHeader"></div>
+      
+      <!-- Tab 1: Errors -->
+      <div class="gsc-tab-panel active" id="tabPanelErrors"></div>
+
+      <!-- Tab 2: Warnings -->
+      <div class="gsc-tab-panel" id="tabPanelWarnings"></div>
+
+      <!-- Tab 3: Best Practices -->
+      <div class="gsc-tab-panel" id="tabPanelPractices"></div>
+
+      <!-- Tab 4: SEO Insights (Depth, Hygiene, Freshness) -->
+      <div class="gsc-tab-panel" id="tabPanelSeoInsights">
+        <div class="seo-insights-grid" id="seoInsightsContent"></div>
+      </div>
+
+      <!-- Tab 5: URLs Explorer -->
+      <div class="gsc-tab-panel" id="tabPanelUrls">
+        <div class="url-toolbar">
+          <div class="search-input-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" placeholder="Filter URLs by keyword..." id="urlSearchInput">
+          </div>
+          <div class="filter-chips-wrap">
+            <button class="g-chip active" data-filter="all">All</button>
+            <button class="g-chip" data-filter="clean">Valid</button>
+            <button class="g-chip" data-filter="issues">With Issues</button>
+            <button class="g-chip" data-filter="hasImages">Images</button>
+            <button class="g-chip" data-filter="hasVideos">Videos</button>
+            <button class="g-chip" data-filter="hasParams">Params (?)</button>
+          </div>
+          <div class="url-toolbar-right">
+            <button class="action-btn-sm g-btn" onclick="copyFilteredUrls()" title="Copy current list of URLs to clipboard">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Copy URLs
+            </button>
+            <div class="url-count-indicator" id="urlFilterCount" style="font-size:12px;font-weight:600;color:var(--text-tertiary)">0 URLs</div>
+          </div>
+        </div>
+
+        <div class="table-scroll-container">
+          <table class="gsc-table">
+            <thead>
+              <tr>
+                <th style="width:55px">#</th>
+                <th>URL (<span id="tableTypeLabel">loc</span>)</th>
+                <th style="width:160px">Last Modified</th>
+                <th style="width:120px">Status</th>
+              </tr>
+            </thead>
+            <tbody id="urlTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="gsc-pagination" id="urlPagination"></div>
+      </div>
+
+      <!-- Tab 6: Extensions & Namespaces -->
+      <div class="gsc-tab-panel" id="tabPanelInfo"></div>
+    </div>
+
+    <!-- Robots.txt Declaration Reference -->
+    <div class="robots-card">
+      <div class="robots-info">
+        <div class="robots-title">Robots.txt Declaration Reference</div>
+        <div class="robots-text">
+          Googlebot discovers sitemaps referenced anywhere in your site's <code>robots.txt</code> file. Add this directive:
+        </div>
+      </div>
+      <div class="robots-code" id="robotsCodeSnippet">Sitemap: https://example.com/sitemap.xml</div>
+      <div class="robots-actions">
+        <button class="robots-copy-btn g-btn" onclick="copyRobotsSnippet()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          Copy Directive
+        </button>
+      </div>
+    </div>
+
+    <!-- Official Google Search Central Documentation Reference Hub -->
+    <div class="doc-hub-card">
+      <div class="doc-hub-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--google-blue)" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+        <span>Official Google Search Central Documentation</span>
+      </div>
+      <div class="doc-links-grid">
+        <a class="g-doc-link" href="https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap" target="_blank" rel="noopener noreferrer">
+          <span>Build and submit a sitemap</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+        <a class="g-doc-link" href="https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps" target="_blank" rel="noopener noreferrer">
+          <span>Manage large sitemaps (Index files)</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+        <a class="g-doc-link" href="https://developers.google.com/search/docs/crawling-indexing/sitemaps/news-sitemap" target="_blank" rel="noopener noreferrer">
+          <span>Google News sitemaps specification</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+        <a class="g-doc-link" href="https://developers.google.com/search/docs/crawling-indexing/sitemaps/image-sitemaps" target="_blank" rel="noopener noreferrer">
+          <span>Image sitemaps guidelines</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+        <a class="g-doc-link" href="https://developers.google.com/search/docs/crawling-indexing/sitemaps/video-sitemaps" target="_blank" rel="noopener noreferrer">
+          <span>Video sitemaps and alternatives</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+        <a class="g-doc-link" href="https://developers.google.com/search/docs/crawling-indexing/sitemaps/combine-sitemap-extensions" target="_blank" rel="noopener noreferrer">
+          <span>How to combine sitemap extensions</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- URL Inspection Drawer Modal -->
+<div class="gsc-drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer(event)">
+  <div class="gsc-drawer" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--google-blue)" stroke-width="2.2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        URL Inspection
+      </h3>
+      <button class="drawer-close-btn" onclick="closeDrawer()">✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="gsc-toast" id="gscToast">
+  <span id="toastText">Notification message</span>
+</div>
+
+<script>
+// ─── Global State ───
+let reportData = null;
+let currentTablePage = 1;
+const PAGE_SIZE = 50;
+let activeSearchQuery = '';
+let activeStatusFilter = 'all';
+
+// ─── Material Ripple Effect ───
+document.addEventListener('click', function(e) {
+  const target = e.target.closest('.g-btn, .g-chip, .g-tab, .upload-btn, .theme-toggle, .file-action-btn, .robots-copy-btn, .sample-btn, .action-btn-sm, .gsc-action-btn');
+  if (!target) return;
+
+  const rect = target.getBoundingClientRect();
+  const ripple = document.createElement('span');
+  ripple.className = 'g-ripple';
+  const size = Math.max(rect.width, rect.height);
+  ripple.style.width = ripple.style.height = size + 'px';
+  ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+  ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+
+  target.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+});
+
+// ─── Theme Management ───
+function toggleColorTheme() {
+  const root = document.documentElement;
+  const current = root.getAttribute('data-theme') || 'light';
+  const next = current === 'light' ? 'dark' : 'light';
+  root.setAttribute('data-theme', next);
+  try { localStorage.setItem('gsc_sitemap_theme', next); } catch(e){}
+  showToast(next === 'dark' ? 'Dark theme enabled' : 'Light theme enabled');
+}
+(function initTheme() {
+  const saved = localStorage.getItem('gsc_sitemap_theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+
+// ─── Toast System ───
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('gscToast');
+  document.getElementById('toastText').textContent = msg;
+  t.classList.add('active');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('active'), 2800);
+}
+
+// ─── Keyboard Shortcut: Ctrl + U ───
+window.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') {
+    e.preventDefault();
+    document.getElementById('fileInput').click();
+  }
+  if (e.key === 'Escape') {
+    closeDrawer();
+  }
+});
+
+// ─── Drag and Drop Handlers ───
+const dropArea = document.getElementById('dropArea');
+const fileInput = document.getElementById('fileInput');
+
+['dragenter', 'dragover'].forEach(name => {
+  dropArea.addEventListener(name, e => {
+    e.preventDefault();
+    dropArea.classList.add('dragover');
+  });
+});
+
+['dragleave', 'drop'].forEach(name => {
+  dropArea.addEventListener(name, e => {
+    e.preventDefault();
+    dropArea.classList.remove('dragover');
+  });
+});
+
+dropArea.addEventListener('drop', e => {
+  if (e.dataTransfer.files && e.dataTransfer.files.length) {
+    processIncomingFile(e.dataTransfer.files[0]);
+  }
+});
+
+fileInput.addEventListener('change', () => {
+  if (fileInput.files && fileInput.files.length) {
+    processIncomingFile(fileInput.files[0]);
+  }
+});
+
+// ─── Sitemap Type Selection State ───
+let selectedSitemapType = 'auto';
+let stagedFileData = null;
+
+function selectSitemapType(type, context) {
+  selectedSitemapType = type;
+  const gridId = context === 'paste' ? 'pasteTypeGrid' : 'stagedTypeGrid';
+  const grid = document.getElementById(gridId);
+  if (grid) {
+    grid.querySelectorAll('.sitemap-type-card').forEach(card => card.classList.remove('selected'));
+    const radio = grid.querySelector(`input[value="${type}"]`);
+    if (radio) {
+      radio.checked = true;
+      radio.closest('.sitemap-type-card').classList.add('selected');
+    }
+  }
+}
+
+// ─── Paste Raw XML Support ───
+function togglePasteBox() {
+  const box = document.getElementById('pasteBoxCard');
+  box.classList.toggle('visible');
+  if (box.classList.contains('visible')) {
+    selectSitemapType('auto', 'paste');
+    document.getElementById('pasteInput').focus();
+    window.scrollTo({ top: box.offsetTop - 80, behavior: 'smooth' });
+  }
+}
+
+function replacePastedXml() {
+  const input = document.getElementById('pasteInput');
+  input.value = '';
+  input.focus();
+  selectSitemapType('auto', 'paste');
+  showToast('Paste area cleared. You can paste new XML code now.');
+}
+
+function cancelPastedXml() {
+  document.getElementById('pasteInput').value = '';
+  document.getElementById('pasteBoxCard').classList.remove('visible');
+  document.getElementById('dropArea').style.display = 'block';
+  const lf = document.getElementById('landingFeatures');
+  if (lf) lf.style.display = 'block';
+}
+
+function submitPastedXml() {
+  const val = document.getElementById('pasteInput').value.trim();
+  if (!val) {
+    showToast('Please paste valid XML sitemap code first.');
+    return;
+  }
+  document.getElementById('pasteBoxCard').classList.remove('visible');
+  parseAndRenderXml(val, val.length, 'pasted-sitemap.xml', selectedSitemapType);
+}
+
+// ─── File Ingestion & GZIP Decompression (With Staged Review) ───
+async function processIncomingFile(file) {
+  const name = file.name;
+  const isGz = name.endsWith('.gz');
+
+  try {
+    let xmlText = '';
+    if (isGz) {
+      if (typeof DecompressionStream !== 'undefined') {
+        const stream = file.stream().pipeThrough(new DecompressionStream('gzip'));
+        const response = new Response(stream);
+        xmlText = await response.text();
+      } else {
+        throw new Error('Gzip decompression is not supported in this browser version. Please decompress to .xml first.');
+      }
+    } else {
+      xmlText = await file.text();
+    }
+
+    // Stage the file so the user can choose the sitemap type & analyze/cancel/replace
+    stagedFileData = {
+      text: xmlText,
+      size: file.size,
+      name: file.name
+    };
+
+    document.getElementById('dropArea').style.display = 'none';
+    const lf = document.getElementById('landingFeatures');
+    if (lf) lf.style.display = 'none';
+    document.getElementById('pasteBoxCard').classList.remove('visible');
+
+    document.getElementById('stagedFileName').textContent = file.name;
+    document.getElementById('stagedFileSize').textContent = formatBytes(file.size);
+    document.getElementById('stagedFileEncoding').textContent = `${formatNumber(xmlText.split('\n').length)} lines • UTF-8`;
+
+    selectSitemapType('auto', 'staged');
+    const stagedCard = document.getElementById('stagedFileCard');
+    stagedCard.classList.add('visible');
+    window.scrollTo({ top: stagedCard.offsetTop - 80, behavior: 'smooth' });
+    showToast('File loaded! Select XML sitemap type to validate, then click Analyze.');
+  } catch (err) {
+    showToast('Failed to read file: ' + err.message);
+  }
+}
+
+function analyzeStagedFile() {
+  if (!stagedFileData) {
+    showToast('No staged file found.');
+    return;
+  }
+  document.getElementById('stagedFileCard').classList.remove('visible');
+  parseAndRenderXml(stagedFileData.text, stagedFileData.size, stagedFileData.name, selectedSitemapType);
+}
+
+function cancelStagedFile() {
+  stagedFileData = null;
+  fileInput.value = '';
+  document.getElementById('stagedFileCard').classList.remove('visible');
+  document.getElementById('dropArea').style.display = 'block';
+  const lf = document.getElementById('landingFeatures');
+  if (lf) lf.style.display = 'block';
+}
+
+function parseAndRenderXml(xmlText, fileSize, fileName, targetType = 'auto') {
+  dropArea.style.display = 'none';
+  const lf = document.getElementById('landingFeatures');
+  if (lf) lf.style.display = 'none';
+  document.getElementById('pasteBoxCard').classList.remove('visible');
+  const staged = document.getElementById('stagedFileCard');
+  if (staged) staged.classList.remove('visible');
+
+  const barCard = document.getElementById('progressBarCard');
+  const barFill = document.getElementById('progressFill');
+  const barStatus = document.getElementById('progressStatus');
+  const barPct = document.getElementById('progressPercent');
+  barCard.style.display = 'block';
+
+  barFill.style.width = '45%';
+  barStatus.textContent = 'Parsing XML DOM hierarchy...';
+  barPct.textContent = '45%';
+
+  setTimeout(() => {
+    barFill.style.width = '80%';
+    barStatus.textContent = `Validating as ${targetType === 'auto' ? 'Sitemap' : targetType.toUpperCase()} against Google Search Central guidelines...`;
+    barPct.textContent = '80%';
+
+    setTimeout(() => {
+      try {
+        reportData = runFullValidation(xmlText, fileSize, fileName, targetType);
+        barFill.style.width = '100%';
+        barStatus.textContent = 'Analysis complete';
+        barPct.textContent = '100%';
+
+        setTimeout(() => {
+          barCard.style.display = 'none';
+          dropArea.style.display = 'none';
+          if (lf) lf.style.display = 'none';
+          renderDashboard(reportData);
+        }, 280);
+      } catch (err) {
+        barStatus.textContent = 'Validation failed: ' + err.message;
+        barFill.style.background = 'var(--google-red)';
+      }
+    }, 80);
+  }, 80);
+}
+
+function resetApp() {
+  document.getElementById('fileBadgeCard').classList.remove('visible');
+  document.getElementById('dropArea').style.display = 'block';
+  const lf = document.getElementById('landingFeatures');
+  if (lf) lf.style.display = 'block';
+  document.getElementById('resultsView').style.display = 'none';
+  document.getElementById('progressBarCard').style.display = 'none';
+  document.getElementById('pasteBoxCard').classList.remove('visible');
+  const staged = document.getElementById('stagedFileCard');
+  if (staged) staged.classList.remove('visible');
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('progressFill').style.background = '';
+  fileInput.value = '';
+  reportData = null;
+  stagedFileData = null;
+  selectedSitemapType = 'auto';
+  activeSearchQuery = '';
+  activeStatusFilter = 'all';
+  currentTablePage = 1;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── Helpers ───
+const esc = str => {
+  if (!str) return '';
+  const d = document.createElement('div');
+  d.textContent = String(str);
+  return d.innerHTML;
+};
+const formatNumber = num => Number(num || 0).toLocaleString();
+const formatBytes = b => {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+  return (b / 1048576).toFixed(2) + ' MB';
+};
+
+// ─── Core Validation Engine ───
+function runFullValidation(xmlStr, fileSize, fileName, targetType = 'auto') {
+  const startTime = performance.now();
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlStr, 'application/xml');
+
+  const report = {
+    fileName,
+    fileSize,
+    parseTimeMs: 0,
+    type: 'unknown',
+    isValid: true,
+    encoding: 'UTF-8',
+    urls: [],
+    errors: [],
+    warnings: [],
+    bestPractices: [],
+    info: [],
+    stats: {},
+    extensions: { image: false, video: false, news: false, hreflang: false },
+    namespaces: [],
+    firstDomain: '',
+    seoInsights: {}
+  };
+
+  // 1. XML Syntax Check
+  const parseErr = xmlDoc.querySelector('parsererror');
+  if (parseErr) {
+    report.isValid = false;
+    report.errors.push({
+      title: 'Malformed XML Syntax',
+      summary: 'The file contains invalid XML syntax and cannot be parsed by search engine crawlers.',
+      explanation: 'Googlebot requires well-formed XML per XML 1.0 specifications. Ensure all tags are properly closed and all entity characters are escaped (&amp;, &lt;, &gt;, &quot;, &apos;).',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Google Sitemap Syntax Guide',
+      items: [parseErr.textContent.trim().substring(0, 500)]
+    });
+    report.parseTimeMs = Math.round(performance.now() - startTime);
+    return report;
+  }
+
+  // 2. XML Encoding Declaration
+  const prologMatch = xmlStr.match(/<\?xml[^?]*encoding=["']([^"']+)["']/i);
+  if (prologMatch) {
+    report.encoding = prologMatch[1].toUpperCase();
+    if (report.encoding !== 'UTF-8') {
+      report.errors.push({
+        title: 'Non-UTF-8 Character Encoding',
+        summary: `Sitemap specifies "${report.encoding}" encoding instead of UTF-8.`,
+        explanation: 'The Sitemap Protocol explicitly requires UTF-8 character encoding for all sitemap and sitemap index files.',
+        docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+        docTitle: 'Google Sitemap File Encoding Requirements',
+        items: [`Header declares: encoding="${report.encoding}". Change to: encoding="UTF-8".`]
+      });
+    }
+  } else {
+    report.info.push({
+      title: 'Missing XML Encoding Declaration',
+      summary: 'The XML declaration does not explicitly state encoding="UTF-8".',
+      explanation: 'While UTF-8 is the default assumption, it is best practice to include &lt;?xml version="1.0" encoding="UTF-8"?&gt; at the very start of the file.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'XML Prolog Specifications',
+      items: ['Add encoding="UTF-8" to the XML declaration on line 1.']
+    });
+  }
+
+  // 3. Root Node & Protocol Namespace
+  const root = xmlDoc.documentElement;
+  const rootTag = root.localName;
+  const SITEMAP_NS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+
+  if (rootTag === 'urlset') {
+    report.type = 'urlset';
+  } else if (rootTag === 'sitemapindex') {
+    report.type = 'sitemapindex';
+  } else {
+    report.isValid = false;
+    report.errors.push({
+      title: 'Invalid Root XML Element',
+      summary: `Expected &lt;urlset&gt; or &lt;sitemapindex&gt;, but found &lt;${esc(rootTag)}&gt;.`,
+      explanation: 'Search engines only recognize sitemaps whose root node is either &lt;urlset&gt; (for URLs) or &lt;sitemapindex&gt; (for index files).',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Sitemap XML Formats',
+      items: [`Current root tag is &lt;${esc(rootTag)}&gt;`]
+    });
+    report.parseTimeMs = Math.round(performance.now() - startTime);
+    return report;
+  }
+
+  const rootNs = root.namespaceURI;
+  if (rootNs !== SITEMAP_NS) {
+    report.errors.push({
+      title: 'Incorrect Sitemap Namespace',
+      summary: `The default namespace xmlns is not the official Sitemaps schema.`,
+      explanation: `Google requires xmlns="${SITEMAP_NS}". Found "${rootNs || 'none'}". Without this, crawlers may not recognize standard sitemap tags.`,
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Sitemap Protocol Namespaces',
+      items: [`Found: xmlns="${rootNs || ''}"`, `Expected: xmlns="${SITEMAP_NS}"`]
+    });
+  }
+  report.namespaces.push(rootNs || 'none');
+
+  for (let i = 0; i < root.attributes.length; i++) {
+    const attr = root.attributes[i];
+    if (attr.name.startsWith('xmlns:')) {
+      report.namespaces.push(`${attr.name}="${attr.value}"`);
+      if (attr.value.includes('sitemap-image')) report.extensions.image = true;
+      if (attr.value.includes('sitemap-video')) report.extensions.video = true;
+      if (attr.value.includes('sitemap-news')) report.extensions.news = true;
+      if (attr.value === 'http://www.w3.org/1999/xhtml') report.extensions.hreflang = true;
+    }
+  }
+
+  // 4. File Size Limits (50 MB)
+  const MAX_BYTES = 50 * 1024 * 1024;
+  if (fileSize > MAX_BYTES) {
+    report.errors.push({
+      title: 'File Size Exceeds 50 MB Limit',
+      summary: `File size is ${formatBytes(fileSize)}, which exceeds Google's 50 MB uncompressed limit.`,
+      explanation: 'All sitemap formats limit a single file to 50 MB uncompressed. You must split this into multiple sitemaps and reference them inside a sitemap index file.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps',
+      docTitle: 'Google Large Sitemaps & Splitting Guide',
+      items: [`Current size: ${formatBytes(fileSize)} (Limit: 50.0 MB)`]
+    });
+  } else if (fileSize > MAX_BYTES * 0.8) {
+    report.warnings.push({
+      title: 'Approaching 50 MB File Size Limit',
+      summary: `File is at ${Math.round(fileSize / MAX_BYTES * 100)}% of the maximum allowed size.`,
+      explanation: 'Consider splitting into smaller sitemaps now to avoid indexing failures as your website grows.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps',
+      docTitle: 'Google Large Sitemaps & Splitting Guide',
+      items: [`Current size: ${formatBytes(fileSize)} / 50 MB limit`]
+    });
+  }
+
+  // 5. Entries inspection
+  if (report.type === 'urlset') {
+    validateUrlsetEntries(xmlDoc, root, report, targetType);
+  } else {
+    validateSitemapIndexEntries(xmlDoc, root, report, targetType);
+  }
+
+  // 6. Custom Sitemap Type Consistency Check
+  report.selectedType = targetType;
+  if (targetType === 'standard' && report.type !== 'urlset') {
+    report.errors.unshift({
+      title: 'Mismatched Sitemap Type',
+      summary: `Expected Standard XML Sitemap (&lt;urlset&gt;), but found &lt;${esc(rootTag)}&gt;.`,
+      explanation: 'You selected "Standard XML Sitemap" for validation, but this file is a Sitemap Index. Please choose "Sitemap Index File" or use "Auto-Detect".',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Google Sitemaps Protocol',
+      items: [`Root tag is &lt;${esc(rootTag)}&gt; instead of &lt;urlset&gt;`]
+    });
+  } else if (targetType === 'index' && report.type !== 'sitemapindex') {
+    report.errors.unshift({
+      title: 'Mismatched Sitemap Type',
+      summary: `Expected Sitemap Index File (&lt;sitemapindex&gt;), but found &lt;${esc(rootTag)}&gt;.`,
+      explanation: 'You selected "Sitemap Index File", but this file has a &lt;urlset&gt; root and lists canonical URLs directly instead of child sitemaps.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps',
+      docTitle: 'Google Sitemap Index Guide',
+      items: [`Root tag is &lt;${esc(rootTag)}&gt; instead of &lt;sitemapindex&gt;`]
+    });
+  } else if (targetType === 'image' && (report.stats.images || 0) === 0) {
+    report.warnings.unshift({
+      title: 'No Image Extension Tags Detected',
+      summary: 'Validated as Image Sitemap, but found 0 &lt;image:image&gt; elements.',
+      explanation: 'Google Image sitemaps must contain <code>&lt;image:image&gt;</code> extension elements with <code>&lt;image:loc&gt;</code> URLs.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/image-sitemaps',
+      docTitle: 'Google Image Sitemaps Guidelines',
+      items: ['No &lt;image:image&gt; tags found in this file.']
+    });
+  } else if (targetType === 'video' && (report.stats.videos || 0) === 0) {
+    report.warnings.unshift({
+      title: 'No Video Extension Tags Detected',
+      summary: 'Validated as Video Sitemap, but found 0 &lt;video:video&gt; elements.',
+      explanation: 'Google Video sitemaps must contain <code>&lt;video:video&gt;</code> extension elements with required metadata (thumbnail, title, description, content/player loc).',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/video-sitemaps',
+      docTitle: 'Google Video Sitemaps Guidelines',
+      items: ['No &lt;video:video&gt; tags found in this file.']
+    });
+  } else if (targetType === 'news') {
+    if ((report.stats.news || 0) === 0) {
+      report.warnings.unshift({
+        title: 'No News Extension Tags Detected',
+        summary: 'Validated as News Sitemap, but found 0 &lt;news:news&gt; elements.',
+        explanation: 'Google News sitemaps must contain <code>&lt;news:news&gt;</code> extension elements with publication details and publication date.',
+        docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/news-sitemap',
+        docTitle: 'Google News Sitemaps Guidelines',
+        items: ['No &lt;news:news&gt; tags found in this file.']
+      });
+    }
+    if ((report.stats.totalUrls || 0) > 1000) {
+      report.errors.unshift({
+        title: 'News Sitemap Exceeds 1,000 URLs Limit',
+        summary: `Found ${formatNumber(report.stats.totalUrls)} URLs. Google News sitemaps are strictly capped at 1,000 URLs.`,
+        explanation: 'Google Search Central explicitly states: "Do not include more than 1,000 URLs in a Google News sitemap. If you have more than 1,000 articles, break the sitemap into smaller files and use a sitemap index file."',
+        docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/news-sitemap',
+        docTitle: 'Google News Sitemaps Specifications',
+        items: [`Current count: ${formatNumber(report.stats.totalUrls)} URLs (Google News Limit: 1,000)`]
+      });
+    }
+  }
+
+  report.parseTimeMs = Math.round(performance.now() - startTime);
+  return report;
+}
+
+// ─── Validate standard <urlset> ───
+function validateUrlsetEntries(xmlDoc, root, report) {
+  const SITEMAP_NS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+  const urlNodes = root.getElementsByTagNameNS(SITEMAP_NS, 'url');
+  const count = urlNodes.length;
+
+  if (count === 0) {
+    report.warnings.push({
+      title: 'Empty Sitemap (&lt;urlset&gt;)',
+      summary: 'The sitemap does not contain any &lt;url&gt; entries.',
+      explanation: 'An empty sitemap provides no crawling value to Google. If this is intentional (e.g. temporary news sitemap), it will not trigger a penalization.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Building Sitemaps Guide',
+      items: ['No &lt;url&gt; elements detected inside &lt;urlset&gt;.']
+    });
+  }
+
+  if (count > 50000) {
+    report.errors.push({
+      title: 'URL Count Exceeds 50,000 Limit',
+      summary: `Sitemap contains ${formatNumber(count)} URLs, exceeding Google's maximum of 50,000 URLs.`,
+      explanation: 'Google strictly limits individual sitemap files to 50,000 URLs. You must break this file into smaller sitemaps and submit a sitemap index file.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps',
+      docTitle: 'Manage Sitemaps with an Index File',
+      items: [`Total URLs: ${formatNumber(count)} (Exceeds limit by ${formatNumber(count - 50000)})`]
+    });
+  } else if (count > 45000) {
+    report.warnings.push({
+      title: 'Approaching 50,000 URL Limit',
+      summary: `Sitemap is currently at ${Math.round(count / 50000 * 100)}% of the URL capacity.`,
+      explanation: 'As more pages are published, ensure an automated split mechanism is in place before reaching 50,000 URLs.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps',
+      docTitle: 'Manage Sitemaps with an Index File',
+      items: [`Contains ${formatNumber(count)} URLs / 50,000 limit.`]
+    });
+  }
+
+  const seenUrls = new Map();
+  const missingLocEntries = [];
+  const relativeUrls = [];
+  const fragmentUrls = [];
+  const spaceUrls = [];
+  const paramUrls = [];
+  const uppercaseUrls = [];
+  const longUrls = [];
+  const httpUrls = [];
+  const httpsUrls = [];
+  const invalidDateList = [];
+  const deprecatedPriorityList = [];
+  const deprecatedChangefreqList = [];
+  const deprecatedImageTags = [];
+  const deprecatedVideoTags = [];
+  const domainsSet = new Set();
+
+  let depthCounts = { 0: 0, 1: 0, 2: 0, 3: 0, '4+': 0 };
+  let trailingSlashCount = 0;
+  let nonTrailingSlashCount = 0;
+  let nowTime = Date.now();
+  let fresh7Days = 0;
+  let fresh30Days = 0;
+  let fresh90Days = 0;
+  let older1Year = 0;
+  let futureDates = 0;
+
+  let imagesTotal = 0;
+  let videosTotal = 0;
+  let newsTotal = 0;
+  let hreflangTotal = 0;
+  let withLastmod = 0;
+
+  for (let i = 0; i < count; i++) {
+    const uNode = urlNodes[i];
+    const locNode = uNode.getElementsByTagNameNS(SITEMAP_NS, 'loc')[0];
+    const lastmodNode = uNode.getElementsByTagNameNS(SITEMAP_NS, 'lastmod')[0];
+    const priorityNode = uNode.getElementsByTagNameNS(SITEMAP_NS, 'priority')[0];
+    const changefreqNode = uNode.getElementsByTagNameNS(SITEMAP_NS, 'changefreq')[0];
+
+    const item = {
+      index: i + 1,
+      loc: '',
+      lastmod: '',
+      issues: [],
+      images: 0,
+      videos: 0,
+      news: 0,
+      hreflangs: 0,
+      hasParams: false
+    };
+
+    if (!locNode || !locNode.textContent.trim()) {
+      missingLocEntries.push(`Entry #${i + 1} has no <loc> tag.`);
+      item.issues.push('Missing <loc>');
+    } else {
+      const locVal = locNode.textContent.trim();
+      item.loc = locVal;
+
+      if (!/^https?:\/\//i.test(locVal)) {
+        relativeUrls.push({ index: i + 1, url: locVal });
+        item.issues.push('Relative URL');
+      } else {
+        try {
+          const parsed = new URL(locVal);
+          domainsSet.add(parsed.hostname);
+          if (!report.firstDomain) report.firstDomain = parsed.origin;
+
+          if (parsed.protocol === 'http:') httpUrls.push(locVal);
+          if (parsed.protocol === 'https:') httpsUrls.push(locVal);
+
+          if (locVal.includes('#')) {
+            fragmentUrls.push(locVal);
+            item.issues.push('Contains URL fragment (#)');
+          }
+          if (/\s/.test(locVal)) {
+            spaceUrls.push(locVal);
+            item.issues.push('Contains unencoded whitespace');
+          }
+          if (parsed.search) {
+            paramUrls.push(locVal);
+            item.hasParams = true;
+          }
+          if (/[A-Z]/.test(parsed.pathname)) {
+            uppercaseUrls.push(locVal);
+          }
+          if (locVal.length > 120) {
+            longUrls.push(locVal);
+          }
+
+          if (parsed.pathname === '/' || parsed.pathname === '') {
+            depthCounts[0]++;
+          } else {
+            if (parsed.pathname.endsWith('/')) trailingSlashCount++;
+            else nonTrailingSlashCount++;
+
+            const segs = parsed.pathname.split('/').filter(Boolean);
+            const d = segs.length;
+            if (d === 1) depthCounts[1]++;
+            else if (d === 2) depthCounts[2]++;
+            else if (d === 3) depthCounts[3]++;
+            else depthCounts['4+']++;
+          }
+        } catch (e) {
+          item.issues.push('Invalid URL structure');
+        }
+      }
+
+      if (seenUrls.has(locVal)) {
+        const prevIdx = seenUrls.get(locVal);
+        item.issues.push(`Duplicate of #${prevIdx}`);
+      } else {
+        seenUrls.set(locVal, i + 1);
+      }
+    }
+
+    if (lastmodNode && lastmodNode.textContent.trim()) {
+      withLastmod++;
+      item.lastmod = lastmodNode.textContent.trim();
+      if (!isValidW3CDate(item.lastmod)) {
+        invalidDateList.push({ index: i + 1, url: item.loc || `#${i + 1}`, date: item.lastmod });
+        item.issues.push('Invalid lastmod format');
+      } else {
+        const parsedDate = Date.parse(item.lastmod);
+        if (!isNaN(parsedDate)) {
+          const diffDays = (nowTime - parsedDate) / (1000 * 60 * 60 * 24);
+          if (diffDays < -1) {
+            futureDates++;
+            item.issues.push('Future lastmod date');
+          } else if (diffDays <= 7) fresh7Days++;
+          else if (diffDays <= 30) fresh30Days++;
+          else if (diffDays <= 90) fresh90Days++;
+          else if (diffDays >= 365) older1Year++;
+        }
+      }
+    }
+
+    if (priorityNode) {
+      deprecatedPriorityList.push({ index: i + 1, url: item.loc || `#${i + 1}`, val: priorityNode.textContent.trim() });
+    }
+    if (changefreqNode) {
+      deprecatedChangefreqList.push({ index: i + 1, url: item.loc || `#${i + 1}`, val: changefreqNode.textContent.trim() });
+    }
+
+    const imgEls = uNode.getElementsByTagName('image:image');
+    const vidEls = uNode.getElementsByTagName('video:video');
+    const newsEls = uNode.getElementsByTagName('news:news');
+    const hrefEls = uNode.getElementsByTagName('xhtml:link');
+
+    item.images = imgEls.length;
+    item.videos = vidEls.length;
+    item.news = newsEls.length;
+    item.hreflangs = hrefEls.length;
+
+    // Store actual extension details for the drawer
+    item.imageUrls = [];
+    item.videoDetails = [];
+    item.newsDetails = [];
+    item.hreflangLinks = [];
+
+    imagesTotal += imgEls.length;
+    videosTotal += vidEls.length;
+    newsTotal += newsEls.length;
+    hreflangTotal += hrefEls.length;
+
+    if (imgEls.length > 1000) {
+      item.issues.push(`Image count (${imgEls.length}) exceeds 1,000 per URL`);
+    }
+    for (let img of imgEls) {
+      const imgLoc = img.getElementsByTagName('image:loc')[0];
+      const imgLocUrl = imgLoc ? imgLoc.textContent.trim() : '';
+      if (!imgLocUrl) {
+        item.issues.push('Image missing &lt;image:loc&gt;');
+      } else {
+        item.imageUrls.push(imgLocUrl);
+      }
+      ['image:caption', 'image:geo_location', 'image:title', 'image:license'].forEach(dep => {
+        if (img.getElementsByTagName(dep).length) {
+          deprecatedImageTags.push(dep);
+        }
+      });
+    }
+
+    for (let vid of vidEls) {
+      const vThumb = vid.getElementsByTagName('video:thumbnail_loc')[0];
+      const vTitle = vid.getElementsByTagName('video:title')[0];
+      const vDesc = vid.getElementsByTagName('video:description')[0];
+      const vContent = vid.getElementsByTagName('video:content_loc')[0];
+      const vPlayer = vid.getElementsByTagName('video:player_loc')[0];
+      const vDur = vid.getElementsByTagName('video:duration')[0];
+
+      if (!vThumb || !vThumb.textContent.trim()) item.issues.push('Video missing &lt;video:thumbnail_loc&gt;');
+      if (!vTitle || !vTitle.textContent.trim()) item.issues.push('Video missing &lt;video:title&gt;');
+      if (!vDesc || !vDesc.textContent.trim()) item.issues.push('Video missing &lt;video:description&gt;');
+      if (!vContent && !vPlayer) item.issues.push('Video requires &lt;video:content_loc&gt; or &lt;video:player_loc&gt;');
+
+      item.videoDetails.push({
+        title: vTitle ? vTitle.textContent.trim() : '',
+        thumbnail: vThumb ? vThumb.textContent.trim() : '',
+        contentLoc: vContent ? vContent.textContent.trim() : '',
+        playerLoc: vPlayer ? vPlayer.textContent.trim() : '',
+        duration: vDur ? vDur.textContent.trim() : ''
+      });
+
+      if (vDur) {
+        const dSec = parseInt(vDur.textContent.trim());
+        if (isNaN(dSec) || dSec < 1 || dSec > 28800) {
+          item.issues.push('Video duration must be between 1 and 28,800 seconds');
+        }
+      }
+      ['video:category', 'video:gallery_loc', 'video:price', 'video:tvshow'].forEach(dep => {
+        if (vid.getElementsByTagName(dep).length) {
+          deprecatedVideoTags.push(dep);
+        }
+      });
+    }
+
+    for (let n of newsEls) {
+      const pub = n.getElementsByTagName('news:publication')[0];
+      const title = n.getElementsByTagName('news:title')[0];
+      const pubDate = n.getElementsByTagName('news:publication_date')[0];
+
+      if (!pub) item.issues.push('News missing &lt;news:publication&gt;');
+      else {
+        if (!pub.getElementsByTagName('news:name')[0]) item.issues.push('News missing &lt;news:name&gt;');
+        if (!pub.getElementsByTagName('news:language')[0]) item.issues.push('News missing &lt;news:language&gt;');
+      }
+      if (!title || !title.textContent.trim()) item.issues.push('News missing &lt;news:title&gt;');
+      if (!pubDate || !pubDate.textContent.trim()) item.issues.push('News missing &lt;news:publication_date&gt;');
+
+      item.newsDetails.push({
+        name: pub ? (pub.getElementsByTagName('news:name')[0]?.textContent?.trim() || '') : '',
+        language: pub ? (pub.getElementsByTagName('news:language')[0]?.textContent?.trim() || '') : '',
+        title: title ? title.textContent.trim() : '',
+        date: pubDate ? pubDate.textContent.trim() : ''
+      });
+    }
+    if (newsEls.length > 1) {
+      item.issues.push('Multiple &lt;news:news&gt; tags (max 1 allowed per URL)');
+    }
+
+    for (let h of hrefEls) {
+      const hLang = h.getAttribute('hreflang') || '';
+      const hHref = h.getAttribute('href') || '';
+      if (hLang || hHref) {
+        item.hreflangLinks.push({ lang: hLang, href: hHref });
+      }
+    }
+
+    report.urls.push(item);
+  }
+
+  // ── Aggregate Errors ──
+  if (missingLocEntries.length) {
+    report.errors.push({
+      title: 'Missing &lt;loc&gt; Tags in URL Entries',
+      summary: `${missingLocEntries.length} URL entries have no &lt;loc&gt; tag.`,
+      explanation: 'The <code>&lt;loc&gt;</code> tag is the single mandatory requirement for each <code>&lt;url&gt;</code> entry. Sitemaps without <code>&lt;loc&gt;</code> cannot be processed.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Google Sitemap XML Protocol',
+      items: missingLocEntries.slice(0, 15).concat(missingLocEntries.length > 15 ? [`...and ${missingLocEntries.length - 15} more entries`] : [])
+    });
+  }
+
+  if (relativeUrls.length) {
+    report.errors.push({
+      title: 'Relative URLs Detected (Must Be Absolute)',
+      summary: `${relativeUrls.length} URL(s) use relative paths rather than fully-qualified absolute URLs.`,
+      explanation: 'Googlebot requires complete, fully-qualified URLs starting with https:// or http://. Relative paths like /about.html will fail to crawl.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Referenced URLs Guidelines',
+      items: relativeUrls.slice(0, 12).map(r => `Entry #${r.index}: <code>${esc(r.url)}</code>`).concat(relativeUrls.length > 12 ? [`...and ${relativeUrls.length - 12} more`] : [])
+    });
+  }
+
+  // ── Aggregate Warnings ──
+  const dupCount = count - seenUrls.size;
+  if (dupCount > 0) {
+    report.warnings.push({
+      title: 'Duplicate URLs Found',
+      summary: `${dupCount} duplicate URL instance(s) detected in the sitemap.`,
+      explanation: 'Each canonical URL should only appear once in a sitemap. Duplicate entries inflate file size and waste crawler crawl budget.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Sitemap Best Practices',
+      items: [`Found ${dupCount} repeated URLs. Keep only one instance of each canonical URL.`]
+    });
+  }
+
+  if (fragmentUrls.length) {
+    report.warnings.push({
+      title: 'URLs With Anchor Hash Fragments (#)',
+      summary: `${fragmentUrls.length} URL(s) contain fragment identifiers.`,
+      explanation: 'Googlebot does not crawl anchor fragments (e.g. #section). Sitemaps must list clean URLs without fragments.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Google URL Structure Documentation',
+      items: fragmentUrls.slice(0, 10).map(u => `<code>${esc(u)}</code>`)
+    });
+  }
+
+  if (spaceUrls.length) {
+    report.warnings.push({
+      title: 'URLs With Unencoded Whitespace',
+      summary: `${spaceUrls.length} URL(s) have unencoded spaces.`,
+      explanation: 'Spaces must be percent-encoded as %20 or replaced with hyphens. Raw whitespace in URLs violates RFC 3986.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Google Sitemap Character Escaping',
+      items: spaceUrls.slice(0, 10).map(u => `<code>${esc(u)}</code>`)
+    });
+  }
+
+  if (paramUrls.length) {
+    report.warnings.push({
+      title: 'URLs Containing Query Parameters (?)',
+      summary: `${paramUrls.length} URL(s) include query string parameters.`,
+      explanation: 'Sitemaps should only list clean, preferred canonical URLs. Avoid tracking parameters (utm, sessionid, fbclid) in sitemaps to prevent crawl budget dilution.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Canonical URLs in Sitemaps',
+      items: paramUrls.slice(0, 10).map(u => `<code>${esc(u)}</code>`).concat(paramUrls.length > 10 ? [`...and ${paramUrls.length - 10} more`] : [])
+    });
+  }
+
+  if (httpUrls.length && httpsUrls.length) {
+    report.warnings.push({
+      title: 'Mixed HTTP and HTTPS Protocols',
+      summary: `Sitemap contains both insecure HTTP (${httpUrls.length}) and secure HTTPS (${httpsUrls.length}) URLs.`,
+      explanation: 'Google recommends standardizing all internal links and sitemaps on HTTPS.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Securing Sites with HTTPS',
+      items: [`${httpUrls.length} HTTP URLs`, `${httpsUrls.length} HTTPS URLs`]
+    });
+  } else if (httpUrls.length && !httpsUrls.length) {
+    report.warnings.push({
+      title: 'All URLs Use Insecure HTTP Protocol',
+      summary: `All ${httpUrls.length} URLs use http:// instead of https://.`,
+      explanation: 'HTTPS is an official Google ranking signal. Sitemaps should direct search engines to secure canonical HTTPS versions.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'HTTPS as a Ranking Signal',
+      items: ['Consider migrating all URLs to HTTPS.']
+    });
+  }
+
+  if (invalidDateList.length) {
+    report.warnings.push({
+      title: 'Invalid &lt;lastmod&gt; Date Formats',
+      summary: `${invalidDateList.length} URL(s) have lastmod dates that do not match W3C Datetime.`,
+      explanation: 'Google only processes <code>&lt;lastmod&gt;</code> if formatted in valid W3C Datetime format (e.g. YYYY-MM-DD or YYYY-MM-DDThh:mm:ss+00:00).',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Google W3C Datetime Standard',
+      items: invalidDateList.slice(0, 12).map(d => `Entry #${d.index}: <code>${esc(d.date)}</code> in URL <code>${esc(d.url)}</code>`).concat(invalidDateList.length > 12 ? [`...and ${invalidDateList.length - 12} more`] : [])
+    });
+  }
+
+  if (futureDates > 0) {
+    report.warnings.push({
+      title: 'Future &lt;lastmod&gt; Dates Detected',
+      summary: `${futureDates} URL(s) specify lastmod dates in the future.`,
+      explanation: 'Dates in the future cause Googlebot to disregard <code>&lt;lastmod&gt;</code> accuracy entirely for your domain.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Google lastmod Verification Guidelines',
+      items: [`Found ${futureDates} future date timestamps.`]
+    });
+  }
+
+  // ── Deprecated Tags Specificity ──
+  if (deprecatedPriorityList.length || deprecatedChangefreqList.length) {
+    const depItems = [];
+    if (deprecatedPriorityList.length) {
+      depItems.push(`<strong>&lt;priority&gt;</strong> tag found in <strong>${formatNumber(deprecatedPriorityList.length)}</strong> URL(s). Google officially ignores this tag.`);
+      depItems.push(`Example in URL: <code>${esc(deprecatedPriorityList[0].url)}</code> with value <code>&lt;priority&gt;${esc(deprecatedPriorityList[0].val)}&lt;/priority&gt;</code>`);
+    }
+    if (deprecatedChangefreqList.length) {
+      depItems.push(`<strong>&lt;changefreq&gt;</strong> tag found in <strong>${formatNumber(deprecatedChangefreqList.length)}</strong> URL(s). Google officially ignores this tag.`);
+      depItems.push(`Example in URL: <code>${esc(deprecatedChangefreqList[0].url)}</code> with value <code>&lt;changefreq&gt;${esc(deprecatedChangefreqList[0].val)}&lt;/changefreq&gt;</code>`);
+    }
+
+    report.warnings.push({
+      title: 'Deprecated Tags Detected (&lt;priority&gt;, &lt;changefreq&gt;)',
+      summary: `Found deprecated tags that Google ignores.`,
+      explanation: 'Google Search Central explicitly stated that Googlebot completely ignores <code>&lt;priority&gt;</code> and <code>&lt;changefreq&gt;</code> values. Omitting them significantly reduces file size and network latency.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Google Sitemaps Protocol Notes',
+      items: depItems
+    });
+  }
+
+  if (deprecatedImageTags.length) {
+    const uniqueTags = [...new Set(deprecatedImageTags)];
+    report.warnings.push({
+      title: 'Deprecated Image Sitemap Tags',
+      summary: `Image elements contain deprecated tags: ${uniqueTags.map(t => `<code>&lt;${esc(t)}&gt;</code>`).join(', ')}.`,
+      explanation: 'Google officially removed support for <code>&lt;image:caption&gt;</code>, <code>&lt;image:geo_location&gt;</code>, <code>&lt;image:title&gt;</code>, and <code>&lt;image:license&gt;</code>. Only <code>&lt;image:loc&gt;</code> is required and recognized.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/image-sitemaps',
+      docTitle: 'Google Image Sitemaps Reference',
+      items: uniqueTags.map(t => `<code>&lt;${t}&gt;</code> is deprecated and ignored by Google.`)
+    });
+  }
+
+  if (deprecatedVideoTags.length) {
+    const uniqueVideoTags = [...new Set(deprecatedVideoTags)];
+    report.warnings.push({
+      title: 'Deprecated Video Sitemap Tags',
+      summary: `Video elements contain deprecated tags: ${uniqueVideoTags.map(t => `<code>&lt;${esc(t)}&gt;</code>`).join(', ')}.`,
+      explanation: 'Google officially deprecated <code>&lt;video:category&gt;</code>, <code>&lt;video:gallery_loc&gt;</code>, <code>&lt;video:price&gt;</code>, and <code>&lt;video:tvshow&gt;</code>. Remove them to streamline validation.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/video-sitemaps',
+      docTitle: 'Google Video Sitemaps Reference',
+      items: uniqueVideoTags.map(t => `<code>&lt;${t}&gt;</code> has been deprecated by Google Search.`)
+    });
+  }
+
+  if (domainsSet.size > 1) {
+    report.info.push({
+      title: 'Multi-Domain Cross-Submission Detected',
+      summary: `Sitemap references URLs from ${domainsSet.size} distinct hostnames.`,
+      explanation: 'Google permits cross-domain sitemaps only if all referenced domains are verified in Google Search Console or verified via robots.txt cross-submission.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap',
+      docTitle: 'Cross-Domain Sitemap Submission',
+      items: [...domainsSet].map(d => `Domain: <code>${esc(d)}</code>`)
+    });
+  }
+
+  // ── Statistics Summary ──
+  report.stats = {
+    totalUrls: count,
+    uniqueUrls: seenUrls.size,
+    duplicates: dupCount,
+    withLastmod,
+    withoutLastmod: count - withLastmod,
+    lastmodCoverage: count ? Math.round(withLastmod / count * 100) : 0,
+    images: imagesTotal,
+    videos: videosTotal,
+    news: newsTotal,
+    hreflang: hreflangTotal,
+    domains: domainsSet.size,
+    httpCount: httpUrls.length,
+    httpsCount: httpsUrls.length,
+    deprecatedPriority: deprecatedPriorityList.length,
+    deprecatedChangefreq: deprecatedChangefreqList.length
+  };
+
+  report.seoInsights = {
+    depthCounts,
+    trailingSlashCount,
+    nonTrailingSlashCount,
+    fresh7Days,
+    fresh30Days,
+    fresh90Days,
+    older1Year,
+    futureDates,
+    paramUrlsCount: paramUrls.length,
+    uppercaseCount: uppercaseUrls.length,
+    longUrlsCount: longUrls.length
+  };
+
+  report.bestPractices = buildBestPracticesChecklist(report);
+}
+
+// ─── Validate <sitemapindex> ───
+function validateSitemapIndexEntries(xmlDoc, root, report) {
+  const SITEMAP_NS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+  const smNodes = root.getElementsByTagNameNS(SITEMAP_NS, 'sitemap');
+  const count = smNodes.length;
+
+  if (count === 0) {
+    report.warnings.push({
+      title: 'Empty Sitemap Index',
+      summary: 'The index file does not contain any &lt;sitemap&gt; entries.',
+      explanation: 'A sitemap index must reference at least one child sitemap file using <code>&lt;sitemap&gt;&lt;loc&gt;...&lt;/loc&gt;&lt;/sitemap&gt;</code>.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps',
+      docTitle: 'Google Sitemap Index Guidelines',
+      items: ['No &lt;sitemap&gt; child elements found.']
+    });
+  }
+
+  if (count > 50000) {
+    report.errors.push({
+      title: 'Sitemap Index Exceeds 50,000 Sitemaps',
+      summary: `Index lists ${formatNumber(count)} sitemaps, exceeding the 50,000 maximum.`,
+      explanation: 'Google allows a sitemap index to reference up to 50,000 individual sitemap files.',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps',
+      docTitle: 'Large Sitemaps Reference',
+      items: [`Found ${formatNumber(count)} sitemaps.`]
+    });
+  }
+
+  const seenSitemaps = new Map();
+  for (let i = 0; i < count; i++) {
+    const sNode = smNodes[i];
+    const locNode = sNode.getElementsByTagNameNS(SITEMAP_NS, 'loc')[0];
+    const lastmodNode = sNode.getElementsByTagNameNS(SITEMAP_NS, 'lastmod')[0];
+
+    const item = {
+      index: i + 1,
+      loc: '',
+      lastmod: '',
+      issues: [],
+      images: 0,
+      videos: 0,
+      news: 0,
+      hreflangs: 0,
+      hasParams: false
+    };
+
+    if (!locNode || !locNode.textContent.trim()) {
+      item.issues.push('Missing &lt;loc&gt;');
+    } else {
+      item.loc = locNode.textContent.trim();
+      if (!/^https?:\/\//i.test(item.loc)) {
+        item.issues.push('Relative URL');
+      }
+      if (seenSitemaps.has(item.loc)) {
+        item.issues.push('Duplicate sitemap reference');
+      } else {
+        seenSitemaps.set(item.loc, i + 1);
+      }
+    }
+
+    if (lastmodNode && lastmodNode.textContent.trim()) {
+      item.lastmod = lastmodNode.textContent.trim();
+      if (!isValidW3CDate(item.lastmod)) {
+        item.issues.push('Invalid lastmod format');
+      }
+    }
+
+    report.urls.push(item);
+  }
+
+  report.stats = {
+    totalUrls: count,
+    uniqueUrls: seenSitemaps.size,
+    duplicates: count - seenSitemaps.size,
+    withLastmod: report.urls.filter(u => u.lastmod).length,
+    withoutLastmod: count - report.urls.filter(u => u.lastmod).length,
+    lastmodCoverage: count ? Math.round(report.urls.filter(u => u.lastmod).length / count * 100) : 0,
+    images: 0,
+    videos: 0,
+    news: 0,
+    hreflang: 0
+  };
+
+  report.seoInsights = {
+    depthCounts: { 0: 0, 1: count, 2: 0, 3: 0, '4+': 0 },
+    trailingSlashCount: 0,
+    nonTrailingSlashCount: 0,
+    fresh7Days: 0,
+    fresh30Days: 0,
+    fresh90Days: 0,
+    older1Year: 0,
+    futureDates: 0,
+    paramUrlsCount: 0,
+    uppercaseCount: 0,
+    longUrlsCount: 0
+  };
+
+  report.bestPractices = [
+    { title: 'UTF-8 File Encoding', desc: 'File specifies UTF-8 encoding as required by Google.', status: report.encoding === 'UTF-8' ? 'pass' : 'fail', docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap' },
+    { title: 'Standard Sitemap Index Schema', desc: `Declares xmlns="${SITEMAP_NS}"`, status: root.namespaceURI === SITEMAP_NS ? 'pass' : 'fail', docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps' },
+    { title: 'File Size <= 50 MB', desc: `Current size: ${formatBytes(report.fileSize)}`, status: report.fileSize <= 52428800 ? 'pass' : 'fail', docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps' },
+    { title: 'Child Sitemaps <= 50,000', desc: `Contains ${formatNumber(count)} child sitemaps`, status: count <= 50000 ? 'pass' : 'fail', docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps' },
+    { title: 'No Duplicate Sitemaps', desc: count === seenSitemaps.size ? 'All sitemaps are distinct' : `${count - seenSitemaps.size} duplicate(s) found`, status: count === seenSitemaps.size ? 'pass' : 'fail', docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps' },
+    { title: 'Absolute Child Sitemap URLs', desc: 'All referenced child sitemaps must use full absolute URLs.', status: report.urls.every(u => !u.issues.includes('Relative URL')) ? 'pass' : 'fail', docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps' }
+  ];
+}
+
+// ─── Best Practices Builder ───
+function buildBestPracticesChecklist(r) {
+  const SITEMAP_NS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+  const list = [];
+
+  list.push({
+    title: 'Character Encoding: UTF-8',
+    desc: 'The sitemap file must be UTF-8 encoded to prevent character misinterpretation.',
+    status: r.encoding === 'UTF-8' ? 'pass' : 'fail',
+    docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap'
+  });
+
+  list.push({
+    title: 'Valid Sitemaps 0.9 XML Namespace',
+    desc: `Root element must declare xmlns="${SITEMAP_NS}".`,
+    status: r.namespaces[0] === SITEMAP_NS ? 'pass' : 'fail',
+    docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap'
+  });
+
+  list.push({
+    title: 'File Size Limit (<= 50 MB uncompressed)',
+    desc: `Current file size is ${formatBytes(r.fileSize)}.`,
+    status: r.fileSize <= 52428800 ? 'pass' : 'fail',
+    docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps'
+  });
+
+  list.push({
+    title: 'URL Count Limit (<= 50,000 URLs per file)',
+    desc: `Contains ${formatNumber(r.stats.totalUrls)} URLs out of 50,000 maximum.`,
+    status: r.stats.totalUrls <= 50000 && r.stats.totalUrls > 0 ? 'pass' : (r.stats.totalUrls === 0 ? 'partial' : 'fail'),
+    docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/large-sitemaps'
+  });
+
+  list.push({
+    title: 'Mandatory &lt;loc&gt; Tags on Every URL',
+    desc: 'Each &lt;url&gt; entry specifies a target webpage location.',
+    status: r.errors.some(e => e.title.includes('Missing &lt;loc&gt;')) ? 'fail' : 'pass',
+    docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap'
+  });
+
+  list.push({
+    title: 'Fully-Qualified Absolute URLs',
+    desc: 'All URLs must begin with http:// or https:// (no relative URLs).',
+    status: r.errors.some(e => e.title.includes('Relative URLs')) ? 'fail' : 'pass',
+    docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap'
+  });
+
+  list.push({
+    title: 'Unique Canonical URLs (No Duplicates)',
+    desc: r.stats.duplicates === 0 ? 'All URLs in the sitemap are unique.' : `${r.stats.duplicates} duplicate URL(s) detected.`,
+    status: r.stats.duplicates === 0 ? 'pass' : 'fail',
+    docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap'
+  });
+
+  list.push({
+    title: 'Secure HTTPS Protocol Adoption',
+    desc: r.stats.httpsCount > 0 && r.stats.httpCount === 0
+      ? `All ${formatNumber(r.stats.httpsCount)} URLs use secure HTTPS.`
+      : (r.stats.httpCount > 0 ? `Contains ${formatNumber(r.stats.httpCount)} insecure HTTP URLs.` : 'No URLs detected.'),
+    status: (r.stats.httpsCount > 0 && r.stats.httpCount === 0) ? 'pass' : 'fail',
+    docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap'
+  });
+
+  list.push({
+    title: '&lt;lastmod&gt; Date Implementation',
+    desc: `${formatNumber(r.stats.withLastmod)} of ${formatNumber(r.stats.totalUrls)} URLs (${r.stats.lastmodCoverage}%) provide lastmod timestamps.`,
+    status: r.stats.lastmodCoverage >= 90 ? 'pass' : (r.stats.lastmodCoverage >= 40 ? 'partial' : 'fail'),
+    docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap'
+  });
+
+  list.push({
+    title: 'W3C Datetime Compliance on &lt;lastmod&gt;',
+    desc: 'Dates must match YYYY-MM-DD or YYYY-MM-DDThh:mm:ssTZD.',
+    status: r.warnings.some(w => w.title.includes('lastmod')) ? 'fail' : 'pass',
+    docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap'
+  });
+
+  list.push({
+    title: 'No Deprecated Tags (&lt;priority&gt;, &lt;changefreq&gt;)',
+    desc: (r.stats.deprecatedPriority === 0 && r.stats.deprecatedChangefreq === 0)
+      ? 'Clean! Does not include tags that Googlebot ignores.'
+      : `Contains ${formatNumber(r.stats.deprecatedPriority + r.stats.deprecatedChangefreq)} deprecated tag instances.`,
+    status: (r.stats.deprecatedPriority === 0 && r.stats.deprecatedChangefreq === 0) ? 'pass' : 'partial',
+    docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap'
+  });
+
+  if (r.extensions.image) {
+    list.push({
+      title: 'Image Extension Protocol',
+      desc: `Detected ${formatNumber(r.stats.images)} image(s) configured with &lt;image:loc&gt;.`,
+      status: 'pass',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/image-sitemaps'
+    });
+  }
+  if (r.extensions.video) {
+    list.push({
+      title: 'Video Extension Protocol',
+      desc: `Detected ${formatNumber(r.stats.videos)} video(s) configured with Google Video sitemap tags.`,
+      status: 'pass',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/video-sitemaps'
+    });
+  }
+  if (r.extensions.news) {
+    list.push({
+      title: 'Google News Extension Protocol',
+      desc: `Detected ${formatNumber(r.stats.news)} article(s) configured with &lt;news:news&gt;.`,
+      status: 'pass',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/news-sitemap'
+    });
+  }
+  if (r.extensions.hreflang) {
+    list.push({
+      title: 'Internationalization (hreflang)',
+      desc: `Found ${formatNumber(r.stats.hreflang)} localized &lt;xhtml:link&gt; alternate links.`,
+      status: 'pass',
+      docLink: 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/combine-sitemap-extensions'
+    });
+  }
+
+  return list;
+}
+
+function isValidW3CDate(str) {
+  if (!str) return false;
+  const isoPattern = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})?)?$/;
+  return isoPattern.test(str) && !isNaN(Date.parse(str));
+}
+
+// ─── Rendering View ───
+function renderDashboard(r) {
+  document.getElementById('resultsView').style.display = 'block';
+
+  document.getElementById('activeFileName').textContent = r.fileName;
+  document.getElementById('activeFileSize').textContent = formatBytes(r.fileSize);
+  document.getElementById('activeFileType').textContent = r.type === 'sitemapindex' ? 'Sitemap Index' : 'URLset Sitemap';
+  document.getElementById('activeParseDuration').textContent = `Parsed in ${r.parseTimeMs}ms`;
+  document.getElementById('fileBadgeCard').classList.add('visible');
+
+  const domain = r.firstDomain || 'https://example.com';
+  document.getElementById('robotsCodeSnippet').textContent = `Sitemap: ${domain}/${r.fileName}`;
+
+  renderOverviewScore(r);
+  renderMetricCards(r);
+  renderGscTabs(r);
+  renderSeoInsights(r);
+}
+
+// ─── Render Radial Health Score ───
+function renderOverviewScore(r) {
+  const bp = r.bestPractices;
+  const passed = bp.filter(b => b.status === 'pass').length;
+  const partial = bp.filter(b => b.status === 'partial').length;
+  const total = bp.length;
+
+  let rawScore = total ? Math.round(((passed + partial * 0.5) / total) * 100) : 0;
+  if (r.errors.length > 0) rawScore = Math.min(rawScore, 55);
+
+  const bar = document.getElementById('scoreBar');
+  const circumference = 2 * Math.PI * 48;
+  const offset = circumference - (rawScore / 100) * circumference;
+
+  bar.style.strokeDasharray = circumference;
+  setTimeout(() => { bar.style.strokeDashoffset = offset; }, 50);
+
+  let colorVar = 'var(--google-green)';
+  let headline = 'Sitemap is healthy & compliant';
+  if (rawScore < 50) {
+    colorVar = 'var(--google-red)';
+    headline = 'Critical crawlability issues detected';
+  } else if (rawScore < 85) {
+    colorVar = 'var(--google-yellow)';
+    headline = 'Sitemap has recommendations to fix';
+  }
+  bar.style.stroke = colorVar;
+
+  const scoreEl = document.getElementById('scoreVal');
+  let count = 0;
+  const step = Math.max(1, Math.ceil(rawScore / 30));
+  const timer = setInterval(() => {
+    count = Math.min(count + step, rawScore);
+    scoreEl.textContent = count;
+    if (count >= rawScore) clearInterval(timer);
+  }, 20);
+  scoreEl.style.color = colorVar;
+
+  document.getElementById('overviewHeadline').textContent = headline;
+  const unitName = r.type === 'sitemapindex' ? 'child sitemaps' : 'URLs';
+  document.getElementById('overviewParagraph').innerHTML = `
+    Verified <strong>${formatNumber(r.stats.totalUrls)}</strong> ${unitName} in <strong>${r.fileName}</strong>.
+    Passed <strong>${passed} of ${total}</strong> Google best practice checks with <strong>${r.errors.length} errors</strong> and <strong>${r.warnings.length} warnings</strong>.
+  `;
+}
+
+// ─── Render Top Metric Cards ───
+function renderMetricCards(r) {
+  const grid = document.getElementById('metricsGrid');
+  const s = r.stats;
+  let html = '';
+
+  if (r.type === 'urlset') {
+    html += metricCard('Total URLs', formatNumber(s.totalUrls), s.totalUrls > 50000 ? 'err' : '', s.totalUrls > 50000 ? 'Exceeds 50K max' : 'Submitted URLs');
+    html += metricCard('Unique URLs', formatNumber(s.uniqueUrls), 'ok', 'Canonical entries');
+    html += metricCard('Duplicates', formatNumber(s.duplicates), s.duplicates > 0 ? 'warn' : 'ok', s.duplicates > 0 ? 'Repeated entries' : 'Zero duplicates');
+    html += metricCard('Lastmod Coverage', `${s.lastmodCoverage}%`, s.lastmodCoverage >= 90 ? 'ok' : 'warn', `${formatNumber(s.withLastmod)} URLs dated`);
+    if (s.images > 0) html += metricCard('Images', formatNumber(s.images), '', 'Image extension');
+    if (s.videos > 0) html += metricCard('Videos', formatNumber(s.videos), '', 'Video extension');
+    if (s.hreflang > 0) html += metricCard('Hreflangs', formatNumber(s.hreflang), '', 'Localization tags');
+    html += metricCard('Errors', formatNumber(r.errors.length), r.errors.length ? 'err' : 'ok', r.errors.length ? 'Requires attention' : 'No blockers');
+    html += metricCard('Warnings', formatNumber(r.warnings.length), r.warnings.length ? 'warn' : 'ok', r.warnings.length ? 'Optimization tips' : 'Clean validation');
+  } else {
+    html += metricCard('Child Sitemaps', formatNumber(s.totalUrls), '', 'In index');
+    html += metricCard('Unique Sitemaps', formatNumber(s.uniqueUrls), 'ok', 'Distinct files');
+    html += metricCard('Errors', formatNumber(r.errors.length), r.errors.length ? 'err' : 'ok', '');
+    html += metricCard('Warnings', formatNumber(r.warnings.length), r.warnings.length ? 'warn' : 'ok', '');
+  }
+
+  grid.innerHTML = html;
+}
+
+function metricCard(label, val, cls, sub) {
+  return `
+    <div class="metric-card ${cls}">
+      <div class="metric-label">${label}</div>
+      <div class="metric-value">${val}</div>
+      ${sub ? `<div class="metric-sub">${sub}</div>` : ''}
+    </div>
+  `;
+}
+
+// ─── Render GSC Tabs & Panels ───
+function renderGscTabs(r) {
+  const header = document.getElementById('gscTabsHeader');
+  const tabs = [
+    { id: 'errors', label: 'Errors', count: r.errors.length, badgeCls: r.errors.length ? 'err' : 'ok' },
+    { id: 'warnings', label: 'Warnings', count: r.warnings.length, badgeCls: r.warnings.length ? 'warn' : 'ok' },
+    { id: 'practices', label: 'Best Practices', count: `${r.bestPractices.filter(b=>b.status==='pass').length}/${r.bestPractices.length}`, badgeCls: 'info' },
+    { id: 'seoInsights', label: 'SEO Insights', count: 'Audit', badgeCls: 'info' },
+    { id: 'urls', label: r.type === 'sitemapindex' ? 'Sitemaps' : 'URL Explorer', count: formatNumber(r.stats.totalUrls), badgeCls: 'info' },
+    { id: 'info', label: 'Extensions & Info', count: r.info.length, badgeCls: 'info' }
+  ];
+
+  header.innerHTML = tabs.map((t, i) => `
+    <button class="gsc-tab ${i === 0 ? 'active' : ''}" onclick="switchGscTab('${t.id}', this)">
+      <span>${t.label}</span>
+      <span class="tab-badge ${t.badgeCls}">${t.count}</span>
+    </button>
+  `).join('');
+
+  document.getElementById('tabPanelErrors').innerHTML = renderIssueAccordions(r.errors, 'err');
+  document.getElementById('tabPanelWarnings').innerHTML = renderIssueAccordions(r.warnings, 'warn');
+
+  document.getElementById('tabPanelPractices').innerHTML = r.bestPractices.map(bp => `
+    <div class="bp-row">
+      <div class="bp-icon-bubble ${bp.status}">
+        ${bp.status === 'pass'
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+          : (bp.status === 'fail'
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>')
+        }
+      </div>
+      <div class="bp-info-col">
+        <div class="bp-header-row">
+          <span class="bp-title">${bp.title}</span>
+          <span class="bp-status-tag ${bp.status}">${bp.status}</span>
+        </div>
+        <div class="bp-description">${bp.desc}</div>
+        ${bp.docLink ? `
+          <div class="bp-doc-link-wrap">
+            <a class="g-doc-link" href="${bp.docLink}" target="_blank" rel="noopener noreferrer">
+              <span>Google Documentation</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('tabPanelInfo').innerHTML = renderIssueAccordions(r.info, 'info');
+  document.getElementById('tableTypeLabel').textContent = r.type === 'sitemapindex' ? 'sitemap' : 'loc';
+  renderUrlTable();
+}
+
+function switchGscTab(tabId, tabBtn) {
+  document.querySelectorAll('.gsc-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.gsc-tab-panel').forEach(p => p.classList.remove('active'));
+
+  tabBtn.classList.add('active');
+  const panelMap = {
+    errors: 'tabPanelErrors',
+    warnings: 'tabPanelWarnings',
+    practices: 'tabPanelPractices',
+    seoInsights: 'tabPanelSeoInsights',
+    urls: 'tabPanelUrls',
+    info: 'tabPanelInfo'
+  };
+  const target = document.getElementById(panelMap[tabId]);
+  if (target) target.classList.add('active');
+}
+
+// ─── Render Issue Accordion Rows ───
+function renderIssueAccordions(issues, type) {
+  if (!issues || issues.length === 0) {
+    return `
+      <div style="padding:60px 24px;text-align:center;color:var(--text-tertiary)">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="margin-bottom:12px;opacity:0.6">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+          <line x1="9" y1="9" x2="9.01" y2="9"></line>
+          <line x1="15" y1="9" x2="15.01" y2="9"></line>
+        </svg>
+        <div style="font-size:15px;font-weight:600;color:var(--text-primary)">No issues found in this category</div>
+        <div style="font-size:13px;margin-top:4px">Everything adheres cleanly to Google Search specifications.</div>
+      </div>
+    `;
+  }
+
+  return issues.map(iss => `
+    <div class="issue-row expanded">
+      <div class="issue-row-header" onclick="this.parentElement.classList.toggle('expanded')">
+        <div class="issue-badge-icon ${type}">
+          ${type === 'err'
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
+            : (type === 'warn'
+              ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
+              : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>')}
+        </div>
+        <div class="issue-headline-wrap">
+          <div class="issue-title-text">${iss.title}</div>
+          <div class="issue-desc-sub">${iss.summary}</div>
+        </div>
+        <span class="issue-count-pill">${iss.items.length} ${iss.items.length === 1 ? 'item' : 'items'}</span>
+        <div class="issue-arrow-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
+      <div class="issue-row-body">
+        <div class="issue-explanation-box">
+          <strong>Why this matters to Google:</strong> ${iss.explanation}
+        </div>
+        ${iss.docLink ? `
+          <div class="issue-doc-action">
+            <a class="g-doc-link" href="${iss.docLink}" target="_blank" rel="noopener noreferrer">
+              <span>Read in Google Search Central: ${esc(iss.docTitle || 'Documentation')}</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+        ` : ''}
+        <div class="issue-items-list">
+          ${iss.items.map(it => `<div class="issue-item-entry"><span>•</span><div>${it}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── Render SEO Insights Tab ───
+function renderSeoInsights(r) {
+  const container = document.getElementById('seoInsightsContent');
+  const seo = r.seoInsights || {};
+  const depth = seo.depthCounts || { 0: 0, 1: 0, 2: 0, 3: 0, '4+': 0 };
+
+  container.innerHTML = `
+    <!-- URL Depth Architecture -->
+    <div class="seo-insight-box">
+      <div class="seo-insight-header">
+        <span>URL Path Depth Hierarchy</span>
+        <span style="font-size:11px;color:var(--text-tertiary)">Directory Slugs</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Root Domain (Level 0)</span>
+        <span class="seo-stat-val">${formatNumber(depth[0] || 0)}</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Level 1 (/category/)</span>
+        <span class="seo-stat-val">${formatNumber(depth[1] || 0)}</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Level 2 (/category/sub/)</span>
+        <span class="seo-stat-val">${formatNumber(depth[2] || 0)}</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Level 3 (/cat/sub/page/)</span>
+        <span class="seo-stat-val">${formatNumber(depth[3] || 0)}</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Deep URLs (Level 4+)</span>
+        <span class="seo-stat-val">${formatNumber(depth['4+'] || 0)}</span>
+      </div>
+    </div>
+
+    <!-- Freshness & Lastmod Chronology -->
+    <div class="seo-insight-box">
+      <div class="seo-insight-header">
+        <span>Content Freshness Distribution</span>
+        <span style="font-size:11px;color:var(--text-tertiary)">Based on &lt;lastmod&gt;</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Updated in Last 7 Days</span>
+        <span class="seo-stat-val" style="color:var(--google-green)">${formatNumber(seo.fresh7Days || 0)}</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Updated in Last 30 Days</span>
+        <span class="seo-stat-val">${formatNumber(seo.fresh30Days || 0)}</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Updated in Last 90 Days</span>
+        <span class="seo-stat-val">${formatNumber(seo.fresh90Days || 0)}</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Older Than 1 Year</span>
+        <span class="seo-stat-val" style="color:var(--google-yellow)">${formatNumber(seo.older1Year || 0)}</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Future Dates (CMS Anomaly)</span>
+        <span class="seo-stat-val" style="${(seo.futureDates > 0) ? 'color:var(--google-red)' : ''}">${formatNumber(seo.futureDates || 0)}</span>
+      </div>
+    </div>
+
+    <!-- URL Hygiene & Cleanliness -->
+    <div class="seo-insight-box">
+      <div class="seo-insight-header">
+        <span>URL Hygiene &amp; Cleanliness</span>
+        <span style="font-size:11px;color:var(--text-tertiary)">Best Practices</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>URLs with Parameters (?)</span>
+        <span class="seo-stat-val" style="${seo.paramUrlsCount ? 'color:var(--google-yellow)' : ''}">${formatNumber(seo.paramUrlsCount || 0)}</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Trailing Slash Consistency</span>
+        <span class="seo-stat-val">${formatNumber(seo.trailingSlashCount || 0)} with / vs ${formatNumber(seo.nonTrailingSlashCount || 0)} without</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Uppercase Characters in Path</span>
+        <span class="seo-stat-val" style="${seo.uppercaseCount ? 'color:var(--google-yellow)' : ''}">${formatNumber(seo.uppercaseCount || 0)}</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Long URLs (>120 Characters)</span>
+        <span class="seo-stat-val">${formatNumber(seo.longUrlsCount || 0)}</span>
+      </div>
+      <div class="seo-stat-row">
+        <span>Canonical Duplicate Instances</span>
+        <span class="seo-stat-val" style="${r.stats.duplicates ? 'color:var(--google-red)' : ''}">${formatNumber(r.stats.duplicates || 0)}</span>
+      </div>
+    </div>
+  `;
+}
+
+// ─── Render Interactive URL Explorer ───
+function renderUrlTable() {
+  if (!reportData) return;
+  const list = reportData.urls;
+
+  let filtered = list;
+  if (activeSearchQuery) {
+    const q = activeSearchQuery.toLowerCase();
+    filtered = filtered.filter(u => u.loc.toLowerCase().includes(q));
+  }
+  if (activeStatusFilter === 'clean') {
+    filtered = filtered.filter(u => u.issues.length === 0);
+  } else if (activeStatusFilter === 'issues') {
+    filtered = filtered.filter(u => u.issues.length > 0);
+  } else if (activeStatusFilter === 'hasImages') {
+    filtered = filtered.filter(u => u.images > 0);
+  } else if (activeStatusFilter === 'hasVideos') {
+    filtered = filtered.filter(u => u.videos > 0);
+  } else if (activeStatusFilter === 'hasParams') {
+    filtered = filtered.filter(u => u.hasParams);
+  }
+
+  const total = filtered.length;
+  document.getElementById('urlFilterCount').textContent = `${formatNumber(total)} of ${formatNumber(list.length)} URLs`;
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (currentTablePage > totalPages) currentTablePage = totalPages;
+  const start = (currentTablePage - 1) * PAGE_SIZE;
+  const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+  const tbody = document.getElementById('urlTableBody');
+  if (pageItems.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align:center;padding:48px;color:var(--text-tertiary)">
+          No URLs matching the search and filter criteria.
+        </td>
+      </tr>
+    `;
+  } else {
+    tbody.innerHTML = pageItems.map(item => `
+      <tr onclick="inspectUrl(${item.index})">
+        <td style="color:var(--text-tertiary);font-family:var(--mono);font-size:11px">${item.index}</td>
+        <td>
+          <div class="table-url-cell" title="${esc(item.loc)}">
+            <span>${esc(item.loc || '(missing <loc>)')}</span>
+          </div>
+        </td>
+        <td style="color:var(--text-secondary);font-family:var(--mono);font-size:11px">
+          ${esc(item.lastmod || '—')}
+        </td>
+        <td>
+          ${item.issues.length === 0
+            ? '<span class="badge-tag ok">Valid</span>'
+            : `<span class="badge-tag err">${item.issues.length} issue${item.issues.length > 1 ? 's' : ''}</span>`}
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  renderPaginationControls(totalPages, total, start);
+}
+
+// ─── Table Pagination ───
+function renderPaginationControls(totalPages, totalItems, startOffset) {
+  const container = document.getElementById('urlPagination');
+  if (totalPages <= 1) {
+    container.innerHTML = `<span class="pagination-summary">Showing all ${formatNumber(totalItems)} URLs</span>`;
+    return;
+  }
+
+  let html = `
+    <button class="gsc-page-btn" onclick="goToPage(${currentTablePage - 1})" ${currentTablePage <= 1 ? 'disabled' : ''}>‹</button>
+  `;
+
+  const range = buildPageRange(currentTablePage, totalPages);
+  range.forEach(p => {
+    if (p === '...') {
+      html += `<span style="padding:0 6px;color:var(--text-tertiary)">…</span>`;
+    } else {
+      html += `<button class="gsc-page-btn ${p === currentTablePage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
+    }
+  });
+
+  html += `
+    <button class="gsc-page-btn" onclick="goToPage(${currentTablePage + 1})" ${currentTablePage >= totalPages ? 'disabled' : ''}>›</button>
+    <span class="pagination-summary">
+      ${formatNumber(startOffset + 1)}–${formatNumber(Math.min(startOffset + PAGE_SIZE, totalItems))} of ${formatNumber(totalItems)}
+    </span>
+  `;
+
+  container.innerHTML = html;
+}
+
+function goToPage(p) {
+  currentTablePage = p;
+  renderUrlTable();
+}
+
+function buildPageRange(current, total) {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages = [1];
+  if (current > 3) pages.push('...');
+  for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) pages.push(i);
+  if (current < total - 2) pages.push('...');
+  pages.push(total);
+  return pages;
+}
+
+// ─── Table Search & Filter Listeners ───
+let searchDebounce = null;
+document.getElementById('urlSearchInput').addEventListener('input', e => {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(() => {
+    activeSearchQuery = e.target.value.trim();
+    currentTablePage = 1;
+    renderUrlTable();
+  }, 180);
+});
+
+document.querySelectorAll('.filter-chips-wrap .g-chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    document.querySelectorAll('.filter-chips-wrap .g-chip').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+    activeStatusFilter = this.dataset.filter;
+    currentTablePage = 1;
+    renderUrlTable();
+  });
+});
+
+// ─── Copy Filtered URLs List ───
+function copyFilteredUrls() {
+  if (!reportData) return;
+  const list = reportData.urls;
+  let filtered = list;
+  if (activeSearchQuery) {
+    const q = activeSearchQuery.toLowerCase();
+    filtered = filtered.filter(u => u.loc.toLowerCase().includes(q));
+  }
+  if (activeStatusFilter === 'clean') filtered = filtered.filter(u => u.issues.length === 0);
+  else if (activeStatusFilter === 'issues') filtered = filtered.filter(u => u.issues.length > 0);
+  else if (activeStatusFilter === 'hasImages') filtered = filtered.filter(u => u.images > 0);
+  else if (activeStatusFilter === 'hasVideos') filtered = filtered.filter(u => u.videos > 0);
+  else if (activeStatusFilter === 'hasParams') filtered = filtered.filter(u => u.hasParams);
+
+  const text = filtered.map(u => u.loc).filter(Boolean).join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    showToast(`Copied ${formatNumber(filtered.length)} URLs to clipboard!`);
+  });
+}
+
+// ─── URL Inspection Drawer Modal with Working Live SEO Tools ───
+function inspectUrl(index) {
+  if (!reportData) return;
+  const item = reportData.urls.find(u => u.index === index);
+  if (!item) return;
+
+  const body = document.getElementById('drawerBody');
+  body.innerHTML = `
+    <div class="drawer-url-box">
+      <div style="flex:1;min-width:0;word-break:break-all;line-height:1.45">${esc(item.loc || '(empty)')}</div>
+      ${item.loc ? `<a href="${esc(item.loc)}" target="_blank" rel="noopener noreferrer" style="color:var(--google-blue);text-decoration:none;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:5px;flex-shrink:0;white-space:nowrap;padding:4px 10px;border-radius:14px;background:var(--google-blue-surface);border:1px solid rgba(26,115,232,0.25);transition:all 0.2s"><span>Open Page</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : ''}
+    </div>
+
+    <!-- Official Google Live SEO Quick Actions -->
+    <div class="drawer-actions-label">Official Google Testing &amp; Diagnostic Tools</div>
+    <div class="drawer-tools-row">
+      <a class="gsc-action-btn primary" href="https://search.google.com/test/rich-results?url=${encodeURIComponent(item.loc)}" target="_blank" rel="noopener noreferrer" title="Official Google Rich Results &amp; Schema Markup Validator">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><polyline points="9 15 11 17 15 13"></polyline></svg>
+        <span>Google Rich Results Test ↗</span>
+      </a>
+
+      <a class="gsc-action-btn" href="https://pagespeed.web.dev/analysis?url=${encodeURIComponent(item.loc)}" target="_blank" rel="noopener noreferrer" title="Official Google PageSpeed Insights &amp; Core Web Vitals">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span>PageSpeed Insights ↗</span>
+      </a>
+
+      <a class="gsc-action-btn" href="https://www.google.com/search?q=site:${encodeURIComponent(item.loc)}" target="_blank" rel="noopener noreferrer" title="Check indexation status via Google site: query">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>Google Index (site:) ↗</span>
+      </a>
+
+      <button class="gsc-action-btn" onclick="copyCurl('${esc(item.loc)}')" title="Copy terminal cURL command with Googlebot User-Agent">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+        <span>Copy cURL</span>
+      </button>
+
+      <button class="gsc-action-btn" onclick="copyUrlDirect('${esc(item.loc)}')" title="Copy raw URL to clipboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span>Copy URL</span>
+      </button>
+    </div>
+
+    <div class="drawer-section-title">Indexing &amp; Technical Properties</div>
+    <div class="drawer-field-grid">
+      <div class="drawer-field-label">Canonical Index</div>
+      <div class="drawer-field-value">#${item.index}</div>
+
+      <div class="drawer-field-label">Crawl Status</div>
+      <div class="drawer-field-value">
+        ${item.issues.length === 0 ? '<span style="color:var(--google-green);font-weight:600">Valid (No Issues Detected)</span>' : `<span style="color:var(--google-red);font-weight:600">${item.issues.join(', ')}</span>`}
+      </div>
+
+      <div class="drawer-field-label">Last Modified</div>
+      <div class="drawer-field-value">${esc(item.lastmod || 'None specified')}</div>
+
+      <div class="drawer-field-label">Protocol</div>
+      <div class="drawer-field-value">${item.loc.startsWith('https:') ? 'HTTPS (Secure)' : (item.loc.startsWith('http:') ? 'HTTP (Insecure)' : 'Invalid')}</div>
+    </div>
+
+    <div class="drawer-section-title">Extensions &amp; Media Attachments</div>
+    <div class="drawer-ext-section">
+      <!-- Images Accordion -->
+      <div class="drawer-ext-toggle ${item.images > 0 ? '' : 'disabled'}" onclick="${item.images > 0 ? `toggleDrawerExt('drawerImagesList', this)` : ''}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span>Images Attached</span>
+        <span class="drawer-ext-count">${item.images}</span>
+        ${item.images > 0 ? `<svg class="ext-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>` : ''}
+      </div>
+      ${item.images > 0 ? `
+        <div class="drawer-ext-list ${item.images <= 5 ? 'visible' : ''}" id="drawerImagesList">
+          ${(item.imageUrls || []).map((imgUrl, i) => `
+            <div class="drawer-ext-item">
+              <svg class="ext-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              <div style="flex:1;min-width:0">
+                <a href="${esc(imgUrl)}" target="_blank" rel="noopener noreferrer">${esc(imgUrl)}</a>
+              </div>
+              <button class="mini-icon-btn" onclick="copyUrlDirect('${esc(imgUrl)}')" title="Copy Image URL" style="flex-shrink:0">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <!-- Videos Accordion -->
+      <div class="drawer-ext-toggle ${item.videos > 0 ? '' : 'disabled'}" style="margin-top:8px" onclick="${item.videos > 0 ? `toggleDrawerExt('drawerVideosList', this)` : ''}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <span>Videos Attached</span>
+        <span class="drawer-ext-count">${item.videos}</span>
+        ${item.videos > 0 ? `<svg class="ext-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>` : ''}
+      </div>
+      ${item.videos > 0 ? `
+        <div class="drawer-ext-list ${item.videos <= 5 ? 'visible' : ''}" id="drawerVideosList">
+          ${(item.videoDetails || []).map((v, i) => `
+            <div class="drawer-ext-item" style="flex-direction:column;gap:4px">
+              ${v.title ? `<div style="font-weight:600;color:var(--text-primary);font-size:12.5px">${esc(v.title)} ${v.duration ? `<span style="font-size:11px;color:var(--text-tertiary);font-weight:normal">(${v.duration}s)</span>` : ''}</div>` : ''}
+              ${v.contentLoc ? `
+                <div style="display:flex;align-items:center;gap:6px;width:100%">
+                  <span style="font-size:11px;color:var(--text-tertiary);flex-shrink:0">Content:</span>
+                  <a href="${esc(v.contentLoc)}" target="_blank" rel="noopener noreferrer" style="flex:1;min-width:0">${esc(v.contentLoc)}</a>
+                  <button class="mini-icon-btn" onclick="copyUrlDirect('${esc(v.contentLoc)}')" title="Copy URL" style="flex-shrink:0">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  </button>
+                </div>
+              ` : ''}
+              ${v.playerLoc ? `
+                <div style="display:flex;align-items:center;gap:6px;width:100%">
+                  <span style="font-size:11px;color:var(--text-tertiary);flex-shrink:0">Player:</span>
+                  <a href="${esc(v.playerLoc)}" target="_blank" rel="noopener noreferrer" style="flex:1;min-width:0">${esc(v.playerLoc)}</a>
+                </div>
+              ` : ''}
+              ${v.thumbnail ? `
+                <div style="display:flex;align-items:center;gap:6px;width:100%">
+                  <span style="font-size:11px;color:var(--text-tertiary);flex-shrink:0">Thumbnail:</span>
+                  <a href="${esc(v.thumbnail)}" target="_blank" rel="noopener noreferrer" style="flex:1;min-width:0">${esc(v.thumbnail)}</a>
+                </div>
+              ` : ''}
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <!-- News Accordion -->
+      <div class="drawer-ext-toggle ${item.news > 0 ? '' : 'disabled'}" style="margin-top:8px" onclick="${item.news > 0 ? `toggleDrawerExt('drawerNewsList', this)` : ''}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+        <span>News Articles</span>
+        <span class="drawer-ext-count">${item.news}</span>
+        ${item.news > 0 ? `<svg class="ext-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>` : ''}
+      </div>
+      ${item.news > 0 ? `
+        <div class="drawer-ext-list ${item.news <= 5 ? 'visible' : ''}" id="drawerNewsList">
+          ${(item.newsDetails || []).map((n, i) => `
+            <div class="drawer-ext-item" style="flex-direction:column;gap:3px">
+              <div style="font-weight:600;color:var(--text-primary);font-size:12.5px">${esc(n.title || '(Untitled)')}</div>
+              <div class="drawer-ext-item-meta">
+                ${n.name ? `<strong>${esc(n.name)}</strong>` : ''}
+                ${n.language ? ` [${esc(n.language)}]` : ''}
+                ${n.date ? ` • ${esc(n.date)}` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <!-- Hreflang Accordion -->
+      <div class="drawer-ext-toggle ${item.hreflangs > 0 ? '' : 'disabled'}" style="margin-top:8px" onclick="${item.hreflangs > 0 ? `toggleDrawerExt('drawerHreflangList', this)` : ''}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span>Hreflang Alternates</span>
+        <span class="drawer-ext-count">${item.hreflangs}</span>
+        ${item.hreflangs > 0 ? `<svg class="ext-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>` : ''}
+      </div>
+      ${item.hreflangs > 0 ? `
+        <div class="drawer-ext-list ${item.hreflangs <= 10 ? 'visible' : ''}" id="drawerHreflangList">
+          ${(item.hreflangLinks || []).map((h, i) => `
+            <div class="drawer-ext-item">
+              <span class="lang-chip" style="font-size:11px;font-weight:600;padding:1px 6px;border-radius:4px;background:var(--google-green-light);color:var(--google-green);border:1px solid var(--google-green-border);flex-shrink:0">${esc(h.lang || 'alt')}</span>
+              <div style="flex:1;min-width:0">
+                <a href="${esc(h.href)}" target="_blank" rel="noopener noreferrer">${esc(h.href)}</a>
+              </div>
+              <button class="mini-icon-btn" onclick="copyUrlDirect('${esc(h.href)}')" title="Copy Alternate URL" style="flex-shrink:0">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+    </div>
+
+    ${item.issues.length ? `
+      <div class="drawer-section-title" style="color:var(--google-red)">Detected Anomalies</div>
+      <div style="background:var(--google-red-light);border:1px solid var(--google-red-border);padding:14px;border-radius:8px;font-size:13px;color:var(--google-red)">
+        <ul style="padding-left:18px">
+          ${item.issues.map(iss => `<li>${iss}</li>`).join('')}
+        </ul>
+      </div>
+    ` : ''}
+  `;
+
+  document.getElementById('drawerBackdrop').classList.add('active');
+}
+
+function toggleDrawerExt(listId, toggleBtn) {
+  const el = document.getElementById(listId);
+  if (!el) return;
+  const isVis = el.classList.contains('visible');
+  if (isVis) {
+    el.classList.remove('visible');
+    if (toggleBtn) toggleBtn.classList.remove('expanded');
+  } else {
+    el.classList.add('visible');
+    if (toggleBtn) toggleBtn.classList.add('expanded');
+  }
+}
+
+function copyCurl(url) {
+  const cmd = `curl -I -A "Googlebot" "${url}"`;
+  navigator.clipboard.writeText(cmd).then(() => {
+    showToast('Copied Googlebot cURL command to clipboard!');
+  });
+}
+
+function copyUrlDirect(url) {
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('Copied URL to clipboard!');
+  });
+}
+
+function closeDrawer(e) {
+  if (e && e.target !== document.getElementById('drawerBackdrop')) return;
+  document.getElementById('drawerBackdrop').classList.remove('active');
+}
+
+// ─── Copy Robots.txt Snippet ───
+function copyRobotsSnippet() {
+  const code = document.getElementById('robotsCodeSnippet').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    showToast('Copied sitemap directive to clipboard!');
+  });
+}
+
+// ─── 1-Click Sample Sitemaps ───
+function loadSample(type) {
+  let sampleXml = '';
+  let sampleName = '';
+
+  if (type === 'ecommerce') {
+    sampleName = 'sample-ecommerce-sitemap.xml';
+    sampleXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://example-shop.com/</loc>
+    <lastmod>2026-09-17</lastmod>
+  </url>
+  <url>
+    <loc>https://example-shop.com/collections/apparel</loc>
+    <lastmod>2026-09-15</lastmod>
+  </url>
+  <url>
+    <loc>https://example-shop.com/products/leather-jacket</loc>
+    <lastmod>2026-09-16T10:30:00+00:00</lastmod>
+    <image:image>
+      <image:loc>https://example-shop.com/cdn/jacket-front.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://example-shop.com/cdn/jacket-back.jpg</image:loc>
+    </image:image>
+  </url>
+</urlset>`;
+  } else if (type === 'multilingual') {
+    sampleName = 'sample-multilingual-sitemap.xml';
+    sampleXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://global-enterprise.com/en/pricing</loc>
+    <lastmod>2026-09-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://global-enterprise.com/en/pricing"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://global-enterprise.com/de/preise"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://global-enterprise.com/fr/tarifs"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://global-enterprise.com/en/pricing"/>
+  </url>
+  <url>
+    <loc>https://global-enterprise.com/de/preise</loc>
+    <lastmod>2026-09-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://global-enterprise.com/en/pricing"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://global-enterprise.com/de/preise"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://global-enterprise.com/fr/tarifs"/>
+  </url>
+</urlset>`;
+  } else if (type === 'news') {
+    sampleName = 'sample-news-sitemap.xml';
+    sampleXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  <url>
+    <loc>https://techtimes.org/articles/ai-advancements-2026</loc>
+    <lastmod>2026-09-17T12:00:00+00:00</lastmod>
+    <news:news>
+      <news:publication>
+        <news:name>TechTimes Global</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-09-17T11:45:00+00:00</news:publication_date>
+      <news:title>Latest Breakthroughs in Autonomous Code Generation</news:title>
+    </news:news>
+  </url>
+</urlset>`;
+  } else if (type === 'issues') {
+    sampleName = 'sample-broken-sitemap.xml';
+    sampleXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>/relative-path-issue</loc>
+    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+    <lastmod>17-09-2026</lastmod>
+  </url>
+  <url>
+    <loc>http://insecure-http.com/product?utm_source=facebook&amp;ref=123</loc>
+  </url>
+  <url>
+    <loc>https://insecure-http.com/product#specifications</loc>
+    <lastmod>2029-01-01</lastmod>
+  </url>
+  <url>
+    <loc>https://insecure-http.com/product?utm_source=facebook&amp;ref=123</loc>
+  </url>
+  <url>
+    <!-- Missing loc entry -->
+    <lastmod>2026-09-01</lastmod>
+  </url>
+</urlset>`;
+  } else if (type === 'index') {
+    sampleName = 'sample-sitemap-index.xml';
+    sampleXml = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://example.com/sitemaps/pages-sitemap.xml</loc>
+    <lastmod>2026-09-15</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://example.com/sitemaps/blog-sitemap.xml</loc>
+    <lastmod>2026-09-17</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://example.com/sitemaps/products-sitemap.xml.gz</loc>
+    <lastmod>2026-09-16</lastmod>
+  </sitemap>
+</sitemapindex>`;
+  }
+
+  parseAndRenderXml(sampleXml, sampleXml.length, sampleName);
+}
+</script>
+</body>
+</html>
